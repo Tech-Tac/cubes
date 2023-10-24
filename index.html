@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cubes</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .view {
+        overflow: hidden;
+        background-color: #808080;
+        touch-action: none;
+        user-select: none;
+        height: 100dvh;
+      }
+      .world {
+        --pan-x: 0px;
+        --pan-y: 0px;
+        position: absolute;
+        /* left: calc(50% + var(--pan-x));
+        top: calc(50% + var(--pan-y)); */
+        left: 50%;
+        top: 50%;
+        transform-origin: calc(var(--pan-x) * -1) calc(var(--pan-y) * -1);
+        translate: var(--pan-x) var(--pan-y);
+        scale: 1;
+      }
+      .cube {
+        --x: 0;
+        --y: 0;
+        --z: 0;
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background-color: #f00;
+        background-image: conic-gradient(from -63.5deg at center, #0000 0deg 127deg, #0004 127deg 243.5deg, #0002 243.5deg 360deg);
+        left: calc((var(--x) - var(--z)) * 50px);
+        top: calc((var(--x) + var(--z)) * 25px - var(--y) * 50px);
+        transform: translate3d(0, 0, 0);
+        margin-left: -50px;
+        margin-top: -50px;
+        z-index: calc(var(--x) + var(--y) + var(--z));
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        transition: filter 200ms, scale 100ms;
+        animation: cube-place 100ms ease-in-out;
+      }
+      .cube:hover {
+        filter: brightness(0.75);
+        scale: 1.1;
+      }
+      .cube:active {
+        filter: brightness(0.5);
+        scale: 0.9;
+      }
+      .cube.break {
+        animation: cube-break 150ms ease-out forwards;
+        pointer-events: none;
+      }
+      @keyframes cube-place {
+        from {
+          scale: 0;
+          opacity: 0;
+        }
+      }
+      @keyframes cube-break {
+        to {
+          scale: 1.5;
+          opacity: 0;
+        }
+      }
+
+      .hud {
+        padding: 1em;
+      }
+
+      button {
+        font-size: 1em;
+      }
+
+      .save-load {
+        float: right;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="view">
+      <div class="world"></div>
+      <div class="hud">
+        <input type="color" class="color-picker" value="#ff0000" />
+        <div class="save-load">
+          <button type="button" class="btn-save">Save</button>
+          <button type="button" class="btn-load">
+            <label>load<input type="file" hidden class="load-file" /></label>
+          </button>
+        </div>
+      </div>
+    </div>
+    <script>
+      const view = document.getElementsByClassName("view")[0];
+      const world = document.getElementsByClassName("world")[0];
+      const colorPicker = document.getElementsByClassName("color-picker")[0];
+      const saveBtn = document.getElementsByClassName("btn-save")[0];
+      const loadBtn = document.getElementsByClassName("btn-load")[0];
+      const loadFile = document.getElementsByClassName("load-file")[0];
+
+      let currColor = "#ff0000";
+      let isPanning = false;
+      let panX = 0;
+      let panY = 0;
+      let zoom = 1;
+
+      function getCubes() {
+        return document.querySelectorAll(".cube:not(.break)");
+      }
+
+      function angleFromPoints(x1, y1, x2, y2) {
+        return Math.atan2(y2 - y1, x2 - x1);
+      }
+
+      function worldCoords(x, y) {
+        return {
+          x: Math.round(((x - (innerWidth / 2 + panX * zoom)) / (50 * zoom) + (y - (innerHeight / 2 + panY * zoom)) / (25 * zoom)) / 2),
+          z: Math.round(((y - (innerHeight / 2 + panY * zoom)) / (25 * zoom) - (x - (innerWidth / 2 + panX * zoom)) / (50 * zoom)) / 2),
+        };
+      }
+
+      function getCubeAt(x, y, z) {
+        const cubes = getCubes();
+        for (const cube of cubes) {
+          if (cube.style.getPropertyValue("--x") == x && cube.style.getPropertyValue("--y") == y && cube.style.getPropertyValue("--z") == z) {
+            return cube;
+          }
+        }
+      }
+
+      function serialize() {
+        let frags = [];
+        const cubes = getCubes();
+        for (const cube of cubes) {
+          frags.push(
+            [cube.style.getPropertyValue("--x"), cube.style.getPropertyValue("--y"), cube.style.getPropertyValue("--z"), cube.style.backgroundColor].join("/")
+          );
+        }
+        return frags.join("|");
+      }
+
+      function deserialize(string) {
+        for (const cube of string.split("|")) {
+          placeCube(...cube.split("/"));
+        }
+      }
+
+      function save() {
+        const a = document.createElement("a");
+        a.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(serialize()));
+        a.setAttribute("download", "cubes.cubes");
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+
+      function load(file) {
+        if (file) {
+          const reader = new FileReader();
+          reader.readAsText(file, "UTF-8");
+          reader.onload = (e) => {
+            deserialize(e.target.result);
+          };
+          reader.onerror = (e) => {
+            alert("Error reading file.\nError : " + e.target.error);
+          };
+        }
+      }
+
+      function placeCube(x, y, z, color = currColor) {
+        if (!getCubeAt(x, y, z)) {
+          const cube = document.createElement("div");
+          cube.className = "cube";
+          cube.style.setProperty("--x", x);
+          cube.style.setProperty("--y", y);
+          cube.style.setProperty("--z", z);
+          cube.style.backgroundColor = color;
+          cube.addEventListener("pointerdown", (e) => {
+            if (e.button == 0) {
+              if (e.offsetX > 50 * zoom && e.offsetY > 35 * zoom) placeCube(x + 1, y, z);
+              else if (e.offsetX < 50 * zoom && e.offsetY > 35 * zoom) placeCube(x, y, z + 1);
+              else if (e.offsetY < 50 * zoom) placeCube(x, y + 1, z);
+            } else if (e.button == 2) {
+              breakCube(cube);
+            } else if (e.button == 1) {
+              colorPicker.value = currColor = color;
+            }
+          });
+          world.appendChild(cube);
+          console.log("Placed a block at ", x, y, z, " with color ", color);
+        }
+      }
+
+      function breakCube(cube) {
+        cube.classList.add("break");
+        setTimeout(() => cube.remove(), 150);
+      }
+
+      function pan(x, y) {
+        panX += x / zoom;
+        panY += y / zoom;
+        world.style.setProperty("--pan-x", panX + "px");
+        world.style.setProperty("--pan-y", panY + "px");
+      }
+
+      view.addEventListener("pointerdown", () => (isPanning = true));
+      view.addEventListener("pointermove", (e) => {
+        if (isPanning) {
+          pan(e.movementX, e.movementY);
+        }
+      });
+      view.addEventListener("pointerup", (e) => {
+        isPanning = false;
+        if (e.button == 0 && e.target === view) {
+          const worldPos = worldCoords(e.clientX, e.clientY);
+          placeCube(worldPos.x, 0, worldPos.z);
+        }
+      });
+
+      view.addEventListener("wheel", (e) => {
+        zoom *= 1 + e.deltaY * -0.005;
+        if (zoom < 0.1) zoom = 0.1;
+        else if (zoom > 10) zoom = 10;
+        else pan((e.clientX - innerWidth / 2) * -0.1 * zoom, (e.clientY - innerHeight / 2) * -0.1 * zoom);
+        world.style.scale = zoom;
+      });
+
+      view.addEventListener("contextmenu", (e) => e.preventDefault());
+
+      colorPicker.addEventListener("input", (e) => (currColor = colorPicker.value));
+      saveBtn.addEventListener("click", save);
+      loadFile.addEventListener("input", (e) => load(loadFile.files[0]));
+
+      placeCube(0, 0, 0);
+    </script>
+  </body>
+</html>
