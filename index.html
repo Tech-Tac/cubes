@@ -27,6 +27,7 @@
         top: 50%;
         transform-origin: calc(var(--pan-x) * -1) calc(var(--pan-y) * -1);
         translate: var(--pan-x) var(--pan-y);
+        /* transform: translate3d(var(--pan-x), var(--pan-y), 0); */
         scale: 1;
       }
       .cube {
@@ -40,7 +41,6 @@
         background-image: conic-gradient(from -63.5deg at center, #0000 0deg 127deg, #0004 127deg 243.5deg, #0002 243.5deg 360deg);
         left: calc((var(--x) - var(--z)) * 50px);
         top: calc((var(--x) + var(--z)) * 25px - var(--y) * 50px);
-        transform: translate3d(0, 0, 0);
         margin-left: -50px;
         margin-top: -50px;
         z-index: calc(var(--x) + var(--y) + var(--z));
@@ -75,6 +75,7 @@
 
       .hud {
         padding: 1em;
+        z-index: 2;
       }
 
       button {
@@ -82,7 +83,8 @@
       }
 
       .save-load {
-        float: right;
+        position: absolute;
+        right: 0;
       }
     </style>
   </head>
@@ -149,9 +151,7 @@
       }
 
       function deserialize(string) {
-        for (const cube of string.split("|")) {
-          placeCube(...cube.split("/"));
-        }
+        string.split("|").forEach((c) => placeCube(...c.split("/")));
       }
 
       function save() {
@@ -175,6 +175,13 @@
             alert("Error reading file.\nError : " + e.target.error);
           };
         }
+      }
+
+      function reorganize() {
+        let cubes = getCubes().entries();
+        cubes.sort((a, b) => {
+          a.style.getPropertyValue("--x") + a.style.getPropertyValue("--y") + a.style.getPropertyValue("--z");
+        });
       }
 
       function placeCube(x, y, z, color = currColor) {
