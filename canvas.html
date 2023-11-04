@@ -80,10 +80,10 @@
           canvas.addEventListener("wheel", (e) => {
             if ((this.zoom < canvas.width / 100 && e.deltaY < 0) || (this.zoom > 0.1 && e.deltaY > 0)) {
               this.zoom *= 1 + (canvas.width / 500) * e.deltaY * -0.001;
-              /* this.panX += ((e.offsetX - this.panX * this.zoom) / this.canvas.width - 0.5) * (e.deltaY * -0.1);
-              this.panY += ((e.offsetY - this.panY * this.zoom) / this.canvas.height - 0.5) * (e.deltaY * -0.1); */
-              this.panX += ((e.offsetX - this.canvas.width / 2) / this.canvas.width) * e.deltaY * 0.5;
-              this.panY += ((e.offsetY - this.canvas.height / 2) / this.canvas.height) * e.deltaY * 0.5;
+              this.panX += ((e.offsetX - this.canvas.width / 2) / this.canvas.width) * e.deltaY * 0.05;
+              this.panY += ((e.offsetY - this.canvas.height / 2) / this.canvas.height) * e.deltaY * 0.05;
+              if (this.zoom > canvas.width / 100) this.zoom = canvas.width / 100;
+              if (this.zoom < 0.1) this.zoom = 0.1;
               this.draw();
             }
           });
