@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cubes</title>
     <style>
+      * {
+        box-sizing: border-box;
+      }
       body {
         margin: 0;
         overflow: hidden;
@@ -18,17 +21,13 @@
         height: 100dvh;
       }
       .world {
-        --pan-x: 0px;
-        --pan-y: 0px;
         position: absolute;
-        /* left: calc(50% + var(--pan-x));
-        top: calc(50% + var(--pan-y)); */
         left: 50%;
         top: 50%;
-        transform-origin: calc(var(--pan-x) * -1) calc(var(--pan-y) * -1);
-        translate: var(--pan-x) var(--pan-y);
-        /* transform: translate3d(var(--pan-x), var(--pan-y), 0); */
+        transform-origin: 0 0;
+        translate: 0 0;
         scale: 1;
+        transition: scale 200ms;
       }
       .cube {
         --x: 0;
@@ -74,8 +73,9 @@
       }
 
       .hud {
+        position: fixed;
         padding: 1em;
-        z-index: 2;
+        width: 100%;
       }
 
       button {
@@ -83,9 +83,7 @@
       }
 
       .save-load {
-        position: absolute;
-        right: 0;
-        top: 1em;
+        float: right;
       }
     </style>
   </head>
@@ -152,7 +150,13 @@
       }
 
       function deserialize(string) {
-        string.split("|").forEach((c) => placeCube(...c.split("/")));
+        string.split("|").forEach((c, i) => setTimeout(() => placeCube(...c.split("/")), 25 * i));
+      }
+
+      function clear() {
+        for (const cube of getCubes()) {
+          breakCube(cube);
+        }
       }
 
       function save() {
@@ -170,6 +174,7 @@
           const reader = new FileReader();
           reader.readAsText(file, "UTF-8");
           reader.onload = (e) => {
+            clear();
             deserialize(e.target.result);
           };
           reader.onerror = (e) => {
@@ -195,9 +200,9 @@
           cube.style.backgroundColor = color;
           cube.addEventListener("pointerdown", (e) => {
             if (e.button == 0) {
-              if (e.offsetX > 50 * zoom && e.offsetY > 35 * zoom) placeCube(x + 1, y, z);
-              else if (e.offsetX < 50 * zoom && e.offsetY > 35 * zoom) placeCube(x, y, z + 1);
-              else if (e.offsetY < 50 * zoom) placeCube(x, y + 1, z);
+              if (e.offsetX > 50 * zoom && e.offsetY > 35 * zoom) placeCube(x - 0 + 1, y - 0, z - 0);
+              else if (e.offsetX < 50 * zoom && e.offsetY > 35 * zoom) placeCube(x - 0, y - 0, z - 0 + 1);
+              else if (e.offsetY < 50 * zoom) placeCube(x - 0, y - 0 + 1, z - 0);
             } else if (e.button == 2) {
               breakCube(cube);
             } else if (e.button == 1) {
@@ -217,8 +222,10 @@
       function pan(x, y) {
         panX += x / zoom;
         panY += y / zoom;
-        world.style.setProperty("--pan-x", panX + "px");
-        world.style.setProperty("--pan-y", panY + "px");
+        /* world.style.setProperty("--pan-x", panX + "px");
+        world.style.setProperty("--pan-y", panY + "px"); */
+        world.style.setProperty("transform-origin", -panX + "px " + -panY + "px");
+        world.style.setProperty("translate", panX + "px " + panY + "px");
       }
 
       view.addEventListener("pointerdown", () => (isPanning = true));
@@ -237,6 +244,7 @@
 
       view.addEventListener("wheel", (e) => {
         zoom *= 1 + e.deltaY * -0.005;
+        zoom = Math.round(zoom * 10) / 10;
         if (zoom < 0.1) zoom = 0.1;
         else if (zoom > 10) zoom = 10;
         else pan((e.clientX - innerWidth / 2) * -0.1 * zoom, (e.clientY - innerHeight / 2) * -0.1 * zoom);
