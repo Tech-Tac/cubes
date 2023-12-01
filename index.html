@@ -37,7 +37,7 @@
         width: 100px;
         height: 100px;
         background-color: #f00;
-        background-image: conic-gradient(from -63.5deg at center, #0000 0deg 127deg, #0004 127deg 243.5deg, #0002 243.5deg 360deg);
+        background-image: conic-gradient(from -63.43deg at center, #0000 0deg 126.86deg, #0004 126.86deg 243.43deg, #0002 243.43deg 360deg);
         left: calc((var(--x) - var(--z)) * 50px);
         top: calc((var(--x) + var(--z)) * 25px - var(--y) * 50px);
         margin-left: -50px;
@@ -59,6 +59,28 @@
         animation: cube-break 150ms ease-out forwards;
         pointer-events: none;
       }
+
+      .world.rot-0 .cube {
+        left: calc((var(--x) - var(--z)) * 50px);
+        top: calc((var(--x) + var(--z)) * 25px - var(--y) * 50px);
+        z-index: calc(var(--x) + var(--y) + var(--z));
+      }
+      .world.rot-90 .cube {
+        left: calc((var(--z) * -1 - var(--x)) * 50px);
+        top: calc((var(--z) * -1 + var(--x)) * 25px - var(--y) * 50px);
+        z-index: calc(var(--x) + var(--y) + var(--z) * -1);
+      }
+      .world.rot-180 .cube {
+        left: calc((var(--x) * -1 - var(--z) * -1) * 50px);
+        top: calc((var(--x) * -1 + var(--z) * -1) * 25px - var(--y) * 50px);
+        z-index: calc(var(--x) * -1 + var(--y) + var(--z) * -1);
+      }
+      .world.rot-270 .cube {
+        left: calc((var(--z) - var(--x) * -1) * 50px);
+        top: calc((var(--z) + var(--x) * -1) * 25px - var(--y) * 50px);
+        z-index: calc(var(--x) * -1 + var(--y) + var(--z));
+      }
+
       @keyframes cube-place {
         from {
           scale: 0;
@@ -76,6 +98,12 @@
         position: fixed;
         padding: 1em;
         width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        align-content: flex-start;
       }
 
       button {
@@ -92,6 +120,9 @@
       <div class="world"></div>
       <div class="hud">
         <input type="color" class="color-picker" value="#ff0000" />
+
+        <input type="range" class="rotator" min="0" value="0" step="90" max="270" />
+
         <div class="save-load">
           <button type="button" class="btn-save">Save</button>
           <button type="button" class="btn-load">
@@ -104,12 +135,14 @@
       const view = document.getElementsByClassName("view")[0];
       const world = document.getElementsByClassName("world")[0];
       const colorPicker = document.getElementsByClassName("color-picker")[0];
+      const rotator = document.getElementsByClassName("rotator")[0];
       const saveBtn = document.getElementsByClassName("btn-save")[0];
       const loadBtn = document.getElementsByClassName("btn-load")[0];
       const loadFile = document.getElementsByClassName("load-file")[0];
 
       let currColor = "#ff0000";
       let isPanning = false;
+      let rot = 0;
       let panX = 0;
       let panY = 0;
       let zoom = 1;
@@ -122,11 +155,13 @@
         return Math.atan2(y2 - y1, x2 - x1);
       }
 
-      function worldCoords(x, y) {
-        return {
-          x: Math.round(((x - (innerWidth / 2 + panX * zoom)) / (50 * zoom) + (y - (innerHeight / 2 + panY * zoom)) / (25 * zoom)) / 2),
-          z: Math.round(((y - (innerHeight / 2 + panY * zoom)) / (25 * zoom) - (x - (innerWidth / 2 + panX * zoom)) / (50 * zoom)) / 2),
-        };
+      function worldCoords(screenX, screenY) {
+        const worldX = Math.round(((screenX - (innerWidth / 2 + panX * zoom)) / (50 * zoom) + (screenY - (innerHeight / 2 + panY * zoom)) / (25 * zoom)) / 2);
+        const worldZ = Math.round(((screenY - (innerHeight / 2 + panY * zoom)) / (25 * zoom) - (screenX - (innerWidth / 2 + panX * zoom)) / (50 * zoom)) / 2);
+        if (rot === 0) return { x: worldX, z: worldZ };
+        else if (rot === 90) return { x: worldZ, z: worldX * -1 };
+        else if (rot === 180) return { x: worldX * -1, z: worldZ * -1 };
+        else if (rot === 270) return { x: worldZ * -1, z: worldX };
       }
 
       function getCubeAt(x, y, z) {
@@ -200,9 +235,10 @@
           cube.style.backgroundColor = color;
           cube.addEventListener("pointerdown", (e) => {
             if (e.button == 0) {
-              if (e.offsetX > 50 * zoom && e.offsetY > 35 * zoom) placeCube(x - 0 + 1, y - 0, z - 0);
-              else if (e.offsetX < 50 * zoom && e.offsetY > 35 * zoom) placeCube(x - 0, y - 0, z - 0 + 1);
-              else if (e.offsetY < 50 * zoom) placeCube(x - 0, y - 0 + 1, z - 0);
+              const angle = angleFromPoints(50, 50, e.offsetX, e.offsetY);
+              if (angle > -2.67785867 && angle < -0.46373398) placeCube(x, y + 1, z); //
+              else if (angle > -0.46373398 && angle < 1.5708) placeCube(x + 1, y, z); // Unintentional equal line widths lol
+              else if (angle > 1.5708 || angle < -2.67785867) placeCube(x, y, z + 1); //
             } else if (e.button == 2) {
               breakCube(cube);
             } else if (e.button == 1) {
@@ -210,7 +246,7 @@
             }
           });
           world.appendChild(cube);
-          console.log("Placed a block at ", x, y, z, " with color ", color);
+          console.log("Placed a cube at ", x, y, z, " with color ", color);
         }
       }
 
@@ -222,13 +258,22 @@
       function pan(x, y) {
         panX += x / zoom;
         panY += y / zoom;
-        /* world.style.setProperty("--pan-x", panX + "px");
-        world.style.setProperty("--pan-y", panY + "px"); */
         world.style.setProperty("transform-origin", -panX + "px " + -panY + "px");
         world.style.setProperty("translate", panX + "px " + panY + "px");
       }
 
-      view.addEventListener("pointerdown", () => (isPanning = true));
+      function rotate(angle) {
+        rot = Math.round(angle / 90) * 90;
+        if (rot >= 360) rot -= Math.floor(rot / 360) * 360;
+        world.className = `world rot-${rot}`;
+        return rot;
+      }
+
+      view.addEventListener("pointerdown", (e) => {
+        if (e.target === view) {
+          isPanning = true;
+        }
+      });
       view.addEventListener("pointermove", (e) => {
         if (isPanning) {
           pan(e.movementX, e.movementY);
@@ -253,9 +298,12 @@
 
       view.addEventListener("contextmenu", (e) => e.preventDefault());
 
+      rotator.addEventListener("input", (e) => rotate(rotator.value));
+
       colorPicker.addEventListener("input", (e) => (currColor = colorPicker.value));
       saveBtn.addEventListener("click", save);
       loadFile.addEventListener("input", (e) => load(loadFile.files[0]));
+      loadFile.addEventListener("click", () => (loadFile.value = null));
 
       placeCube(0, 0, 0);
     </script>
