@@ -120,14 +120,10 @@
       <div class="world"></div>
       <div class="hud">
         <input type="color" class="color-picker" value="#ff0000" />
-
         <input type="range" class="rotator" min="0" value="0" step="90" max="270" />
-
         <div class="save-load">
           <button type="button" class="btn-save">Save</button>
-          <button type="button" class="btn-load">
-            <label>load<input type="file" hidden class="load-file" /></label>
-          </button>
+          <button type="button" class="btn-load" onclick="file.click()">load<input type="file" hidden id="file" class="load-file" /></button>
         </div>
       </div>
     </div>
@@ -236,9 +232,16 @@
           cube.addEventListener("pointerdown", (e) => {
             if (e.button == 0) {
               const angle = angleFromPoints(50, 50, e.offsetX, e.offsetY);
-              if (angle > -2.67785867 && angle < -0.46373398) placeCube(x, y + 1, z); //
-              else if (angle > -0.46373398 && angle < 1.5708) placeCube(x + 1, y, z); // Unintentional equal line widths lol
-              else if (angle > 1.5708 || angle < -2.67785867) placeCube(x, y, z + 1); //
+              let newX = 0;
+              let newY = 0;
+              let newZ = 0;
+              if (angle > -2.67785867 && angle < -0.46373398) newY++; //
+              else if (angle > -0.46373398 && angle < 1.5708) newX++; // Unintentionally equal line widths lol
+              else if (angle > 1.5708 || angle < -2.67785867) newZ++; //
+              if (rot === 0) placeCube(x + newX, y + newY, z + newZ);
+              else if (rot === 90) placeCube(x + newZ, y + newY, z + newX * -1);
+              else if (rot === 180) placeCube(x + newX * -1, y + newY, z + newZ * -1);
+              else if (rot === 270) placeCube(x + newZ * -1, y + newY, z + newX);
             } else if (e.button == 2) {
               breakCube(cube);
             } else if (e.button == 1) {
