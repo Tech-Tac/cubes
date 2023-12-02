@@ -45,7 +45,6 @@
         z-index: calc(var(--x) + var(--y) + var(--z));
         clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
         transition: filter 200ms, scale 100ms;
-        animation: cube-place 100ms ease-in-out;
       }
       .cube:hover {
         filter: brightness(0.75);
@@ -55,7 +54,10 @@
         filter: brightness(0.5);
         scale: 0.9;
       }
-      .cube.break {
+      .cube.placing {
+        animation: cube-place 100ms ease-in-out;
+      }
+      .cube.breaking {
         animation: cube-break 150ms ease-out forwards;
         pointer-events: none;
       }
@@ -142,9 +144,11 @@
       let panX = 0;
       let panY = 0;
       let zoom = 1;
+      let history = [];
+      let historyIndex = 0;
 
       function getCubes() {
-        return document.querySelectorAll(".cube:not(.break)");
+        return document.querySelectorAll(".cube:not(.breaking)");
       }
 
       function angleFromPoints(x1, y1, x2, y2) {
@@ -213,6 +217,40 @@
           };
         }
       }
+      function addHistory() {
+        if (historyIndex > 0) {
+          history.length -= historyIndex;
+          historyIndex = 0;
+        }
+        history.push(getCubes());
+      }
+
+      function getHistory() {
+        return history[history.length - historyIndex - 1];
+      }
+
+      function putCubes(cubes) {
+        world.replaceChildren(...cubes);
+      }
+
+      world.classList.contains("");
+
+      function putHistory() {
+        putCubes(getHistory());
+      }
+
+      function undo(steps = 1) {
+        if (history.length > historyIndex + steps) {
+          historyIndex += steps;
+          putHistory();
+        }
+      }
+      function redo(steps = 1) {
+        if (historyIndex >= steps) {
+          historyIndex -= steps;
+          putHistory();
+        }
+      }
 
       function reorganize() {
         let cubes = getCubes().entries();
@@ -224,7 +262,7 @@
       function placeCube(x, y, z, color = currColor) {
         if (!getCubeAt(x, y, z)) {
           const cube = document.createElement("div");
-          cube.className = "cube";
+          cube.className = "cube placing";
           cube.style.setProperty("--x", x);
           cube.style.setProperty("--y", y);
           cube.style.setProperty("--z", z);
@@ -249,13 +287,19 @@
             }
           });
           world.appendChild(cube);
+          addHistory();
+          setTimeout(() => cube.classList.remove("placing"), 100);
           console.log("Placed a cube at ", x, y, z, " with color ", color);
         }
       }
 
       function breakCube(cube) {
-        cube.classList.add("break");
-        setTimeout(() => cube.remove(), 150);
+        cube.classList.add("breaking");
+        setTimeout(() => {
+          cube.classList.remove("breaking");
+          cube.remove();
+        }, 150);
+        addHistory();
       }
 
       function pan(x, y) {
@@ -307,6 +351,17 @@
       saveBtn.addEventListener("click", save);
       loadFile.addEventListener("input", (e) => load(loadFile.files[0]));
       loadFile.addEventListener("click", () => (loadFile.value = null));
+
+      document.addEventListener("keydown", (e) => {
+        if (e.code === "KeyZ" && e.ctrlKey) {
+          e.preventDefault();
+          undo();
+        }
+        if (e.code === "KeyY" && e.ctrlKey) {
+          e.preventDefault();
+          redo();
+        }
+      });
 
       placeCube(0, 0, 0);
     </script>
