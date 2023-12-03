@@ -136,7 +136,7 @@
       const rotator = document.getElementsByClassName("rotator")[0];
       const saveBtn = document.getElementsByClassName("btn-save")[0];
       const loadBtn = document.getElementsByClassName("btn-load")[0];
-      const loadFile = document.getElementsByClassName("load-file")[0];
+      const file = document.getElementById("file");
 
       let currColor = "#ff0000";
       let isPanning = false;
@@ -177,15 +177,13 @@
         let frags = [];
         const cubes = getCubes();
         for (const cube of cubes) {
-          frags.push(
-            [cube.style.getPropertyValue("--x"), cube.style.getPropertyValue("--y"), cube.style.getPropertyValue("--z"), cube.style.backgroundColor].join("/")
-          );
+          frags.push([cube.style.getPropertyValue("--x"), cube.style.getPropertyValue("--y"), cube.style.getPropertyValue("--z"), cube.color].join(","));
         }
-        return frags.join("|");
+        return frags.join(";");
       }
 
       function deserialize(string) {
-        string.split("|").forEach((c, i) => setTimeout(() => placeCube(...c.split("/")), 25 * i));
+        string.split(";").forEach((c, i) => setTimeout(() => placeCube(...c.split(",")), 25 * i));
       }
 
       function clear() {
@@ -204,7 +202,7 @@
         a.remove();
       }
 
-      function load(file) {
+      function open(file) {
         if (file) {
           const reader = new FileReader();
           reader.readAsText(file, "UTF-8");
@@ -261,11 +259,15 @@
 
       function placeCube(x, y, z, color = currColor) {
         if (!getCubeAt(x, y, z)) {
+          x -= 0;
+          y -= 0;
+          z -= 0;
           const cube = document.createElement("div");
           cube.className = "cube placing";
           cube.style.setProperty("--x", x);
           cube.style.setProperty("--y", y);
           cube.style.setProperty("--z", z);
+          cube.color = color;
           cube.style.backgroundColor = color;
           cube.addEventListener("pointerdown", (e) => {
             if (e.button == 0) {
@@ -284,6 +286,9 @@
               breakCube(cube);
             } else if (e.button == 1) {
               colorPicker.value = currColor = color;
+              console.log(colorPicker.value);
+              console.log(currColor);
+              console.log(color);
             }
           });
           world.appendChild(cube);
@@ -349,8 +354,8 @@
 
       colorPicker.addEventListener("input", (e) => (currColor = colorPicker.value));
       saveBtn.addEventListener("click", save);
-      loadFile.addEventListener("input", (e) => load(loadFile.files[0]));
-      loadFile.addEventListener("click", () => (loadFile.value = null));
+      file.addEventListener("input", (e) => open(file.files[0]));
+      file.addEventListener("click", () => (file.value = null));
 
       document.addEventListener("keydown", (e) => {
         if (e.code === "KeyZ" && e.ctrlKey) {
@@ -360,6 +365,14 @@
         if (e.code === "KeyY" && e.ctrlKey) {
           e.preventDefault();
           redo();
+        }
+        if (e.code === "KeyS" && e.ctrlKey) {
+          e.preventDefault();
+          save();
+        }
+        if (e.code === "KeyO" && e.ctrlKey) {
+          e.preventDefault();
+          file.click();
         }
       });
 
