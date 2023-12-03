@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
     <title>Cubes</title>
     <style>
       * {
@@ -19,6 +19,7 @@
         touch-action: none;
         user-select: none;
         height: 100dvh;
+        width: 100dvw;
       }
       .world {
         position: absolute;
@@ -182,16 +183,22 @@
         return frags.join(";");
       }
 
-      function deserialize(string) {
-        string.split(";").forEach((c, i) => /* setTimeout(() => */ placeCube(...c.split(",")) /* , 25 * i) */);
-        addHistory();
+      function deserialize(string, animate = true) {
+        const cubeStrings = string.split(";");
+        if (animate) {
+          cubeStrings.forEach((c, i) => setTimeout(() => placeCube(...c.split(","), true, false), 25 * i));
+          setTimeout(() => addHistory(), 25 * cubeStrings.length);
+        } else {
+          cubeStrings.forEach((c, i) => placeCube(...c.split(","), true, false));
+          addHistory();
+        }
       }
 
-      function clear() {
+      function clear(addToHistory = true) {
         for (const cube of getCubes()) {
-          breakCube(cube);
+          breakCube(cube, false);
         }
-        addHistory();
+        if (addToHistory) addHistory();
       }
 
       function save() {
@@ -209,7 +216,7 @@
           const reader = new FileReader();
           reader.readAsText(file, "UTF-8");
           reader.onload = (e) => {
-            clear();
+            clear(false);
             deserialize(e.target.result);
           };
           reader.onerror = (e) => {
@@ -272,7 +279,7 @@
         });
       }
 
-      function placeCube(x, y, z, color = currColor, force = false) {
+      function placeCube(x, y, z, color = currColor, force = false, addToHistory = true) {
         if (force || !getCubeAt(x, y, z)) {
           x -= 0;
           y -= 0;
@@ -307,19 +314,19 @@
             }
           });
           world.appendChild(cube);
-          addHistory();
+          if (addToHistory) addHistory();
           setTimeout(() => cube.classList.remove("placing"), 100);
           console.log("Placed a cube at ", x, y, z, " with color ", color);
         }
       }
 
-      function breakCube(cube) {
+      function breakCube(cube, addToHistory = true) {
         cube.classList.add("breaking");
         setTimeout(() => {
           cube.classList.remove("breaking");
           cube.remove();
         }, 150);
-        addHistory();
+        if (addToHistory) addHistory();
       }
 
       function pan(x, y) {
@@ -333,12 +340,14 @@
         rot = Math.round(angle / 90) * 90;
         if (rot >= 360 || rot < 0) rot -= Math.floor(rot / 360) * 360;
         world.className = `world rot-${rot}`;
+        rotator.value = rot;
         return rot;
       }
-
+      let downPos = { x: 0, y: 0 };
       view.addEventListener("pointerdown", (e) => {
         if (e.target === view) {
           isPanning = true;
+          downPos = { x: e.clientX, y: e.clientY };
         }
       });
       view.addEventListener("pointermove", (e) => {
@@ -348,7 +357,7 @@
       });
       view.addEventListener("pointerup", (e) => {
         isPanning = false;
-        if (e.button == 0 && e.target === view) {
+        if ((e.button == 0 && e.target === view && Math.abs(e.clientX - downPos.x) < 10) || Math.abs(e.clientY - downPos.y) < 10) {
           const worldPos = worldCoords(e.clientX, e.clientY);
           placeCube(worldPos.x, 0, worldPos.z);
         }
