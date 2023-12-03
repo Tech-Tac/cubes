@@ -183,13 +183,15 @@
       }
 
       function deserialize(string) {
-        string.split(";").forEach((c, i) => setTimeout(() => placeCube(...c.split(",")), 25 * i));
+        string.split(";").forEach((c, i) => /* setTimeout(() => */ placeCube(...c.split(",")) /* , 25 * i) */);
+        addHistory();
       }
 
       function clear() {
         for (const cube of getCubes()) {
           breakCube(cube);
         }
+        addHistory();
       }
 
       function save() {
@@ -215,12 +217,24 @@
           };
         }
       }
-      function addHistory() {
-        if (historyIndex > 0) {
-          history.length -= historyIndex;
-          historyIndex = 0;
+
+      function storeSave() {
+        localStorage.setItem("save", serialize());
+      }
+      function getStoredSave() {
+        return localStorage.getItem("save");
+      }
+
+      function addHistory(force = false) {
+        const cubes = getCubes();
+        if (force || getHistory() !== cubes) {
+          if (historyIndex > 0) {
+            history.length -= historyIndex;
+            historyIndex = 0;
+          }
+          history.push(cubes);
+          storeSave();
         }
-        history.push(getCubes());
       }
 
       function getHistory() {
@@ -229,6 +243,7 @@
 
       function putCubes(cubes) {
         world.replaceChildren(...cubes);
+        storeSave();
       }
 
       world.classList.contains("");
@@ -257,8 +272,8 @@
         });
       }
 
-      function placeCube(x, y, z, color = currColor) {
-        if (!getCubeAt(x, y, z)) {
+      function placeCube(x, y, z, color = currColor, force = false) {
+        if (force || !getCubeAt(x, y, z)) {
           x -= 0;
           y -= 0;
           z -= 0;
@@ -316,7 +331,7 @@
 
       function rotate(angle) {
         rot = Math.round(angle / 90) * 90;
-        if (rot >= 360) rot -= Math.floor(rot / 360) * 360;
+        if (rot >= 360 || rot < 0) rot -= Math.floor(rot / 360) * 360;
         world.className = `world rot-${rot}`;
         return rot;
       }
@@ -374,9 +389,25 @@
           e.preventDefault();
           file.click();
         }
+        if (e.code === "Delete" && e.ctrlKey) {
+          e.preventDefault();
+          clear();
+        }
+        if (e.code === "Comma") {
+          e.preventDefault();
+          rotate(rot - 90);
+        }
+        if (e.code === "Period") {
+          e.preventDefault();
+          rotate(rot + 90);
+        }
       });
 
-      placeCube(0, 0, 0);
+      window.addEventListener("load", () => {
+        const lastSave = getStoredSave();
+        if (lastSave) deserialize(lastSave);
+        else placeCube(0, 0, 0);
+      });
     </script>
   </body>
 </html>
