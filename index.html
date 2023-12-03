@@ -357,7 +357,7 @@
       });
       view.addEventListener("pointerup", (e) => {
         isPanning = false;
-        if ((e.button == 0 && e.target === view && Math.abs(e.clientX - downPos.x) < 10) || Math.abs(e.clientY - downPos.y) < 10) {
+        if (e.button == 0 && e.target === view && (Math.abs(e.clientX - downPos.x) < 10 || Math.abs(e.clientY - downPos.y) < 10)) {
           const worldPos = worldCoords(e.clientX, e.clientY);
           placeCube(worldPos.x, 0, worldPos.z);
         }
