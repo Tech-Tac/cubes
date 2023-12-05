@@ -15,6 +15,8 @@ Try at <https://tech-tac.github.io/cubes>
 - `<` (`,`): Rotate view by 90°deg counterclockwise
 - `ctrl` + `z`: Undo
 - `ctrl` + `y`: Redo
+- `ctrl` + `c`: Copy cubes
+- `ctrl` + `v`: Paste Cubes
 - `ctrl` + `s`: Save
 - `ctrl` + `o`: Open file...
 - `ctrl` + `delete`: Clear all cubes

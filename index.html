@@ -264,6 +264,16 @@
         putCubes(getHistory());
       }
 
+      function copyCubes() {
+        window.navigator.clipboard.writeText(serialize()).then(() => {
+          alert("Copied!");
+        });
+      }
+
+      async function pasteCubes() {
+        deserialize(await window.navigator.clipboard.readText());
+      }
+
       function undo(steps = 1) {
         if (history.length > historyIndex + steps) {
           historyIndex += steps;
@@ -416,6 +426,14 @@
       file.addEventListener("click", () => (file.value = null));
 
       document.addEventListener("keydown", (e) => {
+        if (e.code === "KeyC" && e.ctrlKey) {
+          e.preventDefault();
+          copyCubes();
+        }
+        if (e.code === "KeyV" && e.ctrlKey) {
+          e.preventDefault();
+          pasteCubes();
+        }
         if (e.code === "KeyZ" && e.ctrlKey) {
           e.preventDefault();
           undo();
