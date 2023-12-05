@@ -11,6 +11,7 @@ Try at <https://tech-tac.github.io/cubes>
 - `MMB`: Pick color
 - `wheelup`: Zoom in
 - `wheeldown`: Zoom out
+- `drag`: Pan
 - `>` (`.`): Rotate view by 90°deg clockwise
 - `<` (`,`): Rotate view by 90°deg counterclockwise
 - `ctrl` + `z`: Undo
@@ -24,8 +25,9 @@ Try at <https://tech-tac.github.io/cubes>
 
 ### Touch
 
-- `Tap`: Place cube
-- `Long press`: Break cube
+- `tap`: Place cube
+- `longpress`: Break cube
+- `swipe`: Pan
 
 ## Canvas-based version [Abandoned]
 
