@@ -9,13 +9,14 @@ Try at <https://tech-tac.github.io/cubes>
 - `LMB`: Place cube
 - `RMB`: Break cube
 - `MMB`: Pick color
+- `>` (`.`): Rotate view by 90°deg clockwise
+- `<` (`,`): Rotate view by 90°deg counterclockwise
 - `ctrl` + `z`: Undo
 - `ctrl` + `y`: Redo
 - `ctrl` + `s`: Save
 - `ctrl` + `o`: Open file...
 - `ctrl` + `delete`: Clear all cubes
-- `>` (`.`): Rotate view by 90°deg clockwise
-- `<` (`,`): Rotate view by 90°deg counterclockwise
+- `ctrl` + `shift` + `c`: Share build link
 
 ## Canvas-based version [Abandoned]
 

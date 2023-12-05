@@ -18,8 +18,8 @@
         background-color: #808080;
         touch-action: none;
         user-select: none;
-        height: 100dvh;
-        width: 100dvw;
+        width: 100vw;
+        height: 100vh;
       }
       .world {
         position: absolute;
@@ -188,11 +188,11 @@
         return frags.join(";");
       }
 
-      function deserialize(string, animate = true) {
+      function deserialize(string, animate = true, animationLength = 200) {
         const cubeStrings = string.split(";");
         if (animate) {
-          cubeStrings.forEach((c, i) => setTimeout(() => placeCube(...c.split(","), true, false), (200 / cubeStrings.length) * i));
-          setTimeout(() => addHistory(), 200);
+          cubeStrings.forEach((c, i) => setTimeout(() => placeCube(...c.split(","), true, false), (animationLength / cubeStrings.length) * i));
+          setTimeout(() => addHistory(), animationLength);
         } else {
           cubeStrings.forEach((c, i) => placeCube(...c.split(","), true, false));
           addHistory();
@@ -346,6 +346,22 @@
         rotator.value = rotation;
         return rotation;
       }
+
+      function getURL() {
+        const url = new URL(window.location.href.split("?")[0]);
+        url.searchParams.set("c", serialize());
+        console.log(serialize());
+        return url.href;
+      }
+
+      function share() {
+        const url = getURL();
+        window.navigator.clipboard.writeText(url).then(() => {
+          alert("Copied link: \n" + url);
+        });
+        window.history.pushState(document.title, "", url);
+      }
+
       let downPos = { x: 0, y: 0 };
       view.addEventListener("pointerdown", (e) => {
         if (e.target === view) {
@@ -405,6 +421,10 @@
           e.preventDefault();
           clear();
         }
+        if (e.code === "KeyC" && e.ctrlKey && e.shiftKey) {
+          e.preventDefault();
+          share();
+        }
         if (e.code === "Comma") {
           e.preventDefault();
           rotate(rotation - 90);
@@ -417,7 +437,10 @@
 
       window.addEventListener("load", () => {
         const lastSave = getStoredSave();
-        if (lastSave) deserialize(lastSave);
+        const urlParameter = new URLSearchParams(window.location.search);
+        console.log(urlParameter.get("c"));
+        if (urlParameter.has("c")) deserialize(urlParameter.get("c"));
+        else if (lastSave) deserialize(lastSave);
         else placeCube(0, 0, 0);
       });
     </script>
