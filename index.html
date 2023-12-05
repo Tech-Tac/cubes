@@ -310,6 +310,7 @@
         });
       }
 
+      let isBreaking = false;
       function placeCube(x, y, z, color = currColor, force = false, addToHistory = true) {
         if (force || !getCubeAt(x, y, z)) {
           x -= 0;
@@ -335,28 +336,42 @@
             placeCube(x + rotated.x, y + newY, z + rotated.z);
           }
 
+          function breakFunction() {
+            breakCube(cube);
+            isBreaking = true;
+            started = false;
+          }
+
           let breakTimeout;
           let started = false;
           cube.addEventListener("pointerdown", (e) => {
             if (e.pointerType !== "touch") {
               if (e.button == 0) placeAdjacent(e);
-              else if (e.button == 2) breakCube(cube);
-              else if (e.button == 1) colorPicker.value = currColor = color;
+              else if (e.button == 2) {
+                breakCube(cube);
+                isBreaking = true;
+              } else if (e.button == 1) colorPicker.value = currColor = color;
             } else if (e.pointerType === "touch") {
               started = true;
-              breakTimeout = setTimeout(() => {
-                breakCube(cube);
-                started = false;
-              }, 200);
+              breakTimeout = setTimeout(breakFunction, 200);
             }
           });
           cube.addEventListener("pointerup", (e) => {
+            clearTimeout(breakTimeout);
+            isBreaking = false;
             if (e.pointerType === "touch" && started) {
-              clearTimeout(breakTimeout);
               placeAdjacent(e);
             }
             started = false;
           });
+
+          cube.addEventListener("pointerenter", () => {
+            if (isBreaking) breakTimeout = setTimeout(breakFunction, 200);
+          });
+          cube.addEventListener("pointerleave", () => {
+            clearTimeout(breakTimeout);
+          });
+
           world.appendChild(cube);
           if (addToHistory) addHistory();
           setTimeout(() => cube.classList.remove("placing"), 100);
@@ -421,6 +436,7 @@
           placeCube(worldPos.x, 0, worldPos.z);
         }
         isPanning = false;
+        isBreaking = false;
       });
 
       view.addEventListener("wheel", (e) => {
