@@ -1,6 +1,6 @@
 # Cubes
 
-2.5D Cube voxel art creator
+2.5D Colored cube voxel-art editor
 
 Try at <https://tech-tac.github.io/cubes>
 
@@ -9,6 +9,8 @@ Try at <https://tech-tac.github.io/cubes>
 - `LMB`: Place cube
 - `RMB`: Break cube
 - `MMB`: Pick color
+- `wheelup`: Zoom in
+- `wheeldown`: Zoom out
 - `>` (`.`): Rotate view by 90°deg clockwise
 - `<` (`,`): Rotate view by 90°deg counterclockwise
 - `ctrl` + `z`: Undo
@@ -17,6 +19,11 @@ Try at <https://tech-tac.github.io/cubes>
 - `ctrl` + `o`: Open file...
 - `ctrl` + `delete`: Clear all cubes
 - `ctrl` + `shift` + `c`: Share build link
+
+### Touch
+
+- `Tap`: Place cube
+- `Long press`: Break cube
 
 ## Canvas-based version [Abandoned]
 
