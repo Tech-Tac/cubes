@@ -323,9 +323,6 @@
           cube.color = color;
           cube.style.backgroundColor = color;
 
-          let breakTimeout;
-          let started = false;
-
           function placeAdjacent(e) {
             const angle = angleFromPoints(50, 50, e.offsetX, e.offsetY);
             let newX = 0;
@@ -338,6 +335,8 @@
             placeCube(x + rotated.x, y + newY, z + rotated.z);
           }
 
+          let breakTimeout;
+          let started = false;
           cube.addEventListener("pointerdown", (e) => {
             if (e.pointerType !== "touch") {
               if (e.button == 0) placeAdjacent(e);
@@ -352,7 +351,10 @@
             }
           });
           cube.addEventListener("pointerup", (e) => {
-            if (e.pointerType === "touch" && started) placeAdjacent(e);
+            if (e.pointerType === "touch" && started) {
+              clearTimeout(breakTimeout);
+              placeAdjacent(e);
+            }
             started = false;
           });
           world.appendChild(cube);
@@ -414,13 +416,11 @@
         }
       });
       view.addEventListener("pointerup", (e) => {
-        isPanning = false;
-      });
-      view.addEventListener("click", (e) => {
-        if (e.target === view && (e.clientX - downPos.x === 0 || e.clientY - downPos.y === 0)) {
+        if (isPanning && e.target === view && (e.clientX - downPos.x === 0 || e.clientY - downPos.y === 0)) {
           const worldPos = worldCoords(e.clientX, e.clientY);
           placeCube(worldPos.x, 0, worldPos.z);
         }
+        isPanning = false;
       });
 
       view.addEventListener("wheel", (e) => {
