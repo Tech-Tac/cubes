@@ -2,8 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="description" content="2.5D Colored cube voxel-art editor by Tach-Tac" />
+    <meta name="author" content="Tach-Tac" />
+    <meta name="keywords" content="Cubes, 3D, 2.5D, Voxel, Art" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
     <title>Cubes</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <style>
       * {
         box-sizing: border-box;
@@ -109,6 +113,14 @@
         align-content: flex-start;
       }
 
+      .rotator-wrapper {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: center;
+      }
+
       button {
         font-size: 1em;
       }
@@ -123,7 +135,11 @@
       <div class="world"></div>
       <div class="hud">
         <input type="color" class="color-picker" value="#ff0000" />
-        <input type="range" class="rotator" min="0" value="0" step="90" max="270" />
+        <div class="rotator-wrapper">
+          <button class="rotator-btn" onclick="rotate(rotation-90)">&lt;</button>
+          <input type="range" class="rotator" id="rotator" min="0" value="0" step="90" max="270" />
+          <button class="rotator-btn" onclick="rotate(rotation+90)">&gt;</button>
+        </div>
         <div class="save-load">
           <button type="button" class="btn-save">Save</button>
           <button type="button" class="btn-load" onclick="file.click()">load<input type="file" hidden id="file" class="load-file" /></button>
@@ -189,6 +205,7 @@
       }
 
       function deserialize(string, animate = true, animationLength = 200) {
+        clear(false);
         const cubeStrings = string.split(";");
         if (animate) {
           cubeStrings.forEach((c, i) => setTimeout(() => placeCube(...c.split(","), true, false), (animationLength / cubeStrings.length) * i));
@@ -221,7 +238,6 @@
           const reader = new FileReader();
           reader.readAsText(file, "UTF-8");
           reader.onload = (e) => {
-            clear(false);
             deserialize(e.target.result);
           };
           reader.onerror = (e) => {
