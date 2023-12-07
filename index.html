@@ -163,6 +163,8 @@
       let zoom = 1;
       let history = [];
       let historyIndex = 0;
+      let isBreaking = false;
+      let isPicking = false;
 
       function getCubes() {
         return document.querySelectorAll(".cube:not(.breaking)");
@@ -310,7 +312,13 @@
         });
       }
 
-      let isBreaking = false;
+      function setColor(color) {
+        colorPicker.value = currColor = color;
+      }
+      function pickColor(cube) {
+        setColor(cube.color);
+      }
+
       function placeCube(x, y, z, color = currColor, force = false, addToHistory = true) {
         if (force || !getCubeAt(x, y, z)) {
           x -= 0;
@@ -350,7 +358,7 @@
               else if (e.button == 2) {
                 breakCube(cube);
                 isBreaking = true;
-              } else if (e.button == 1) colorPicker.value = currColor = color;
+              } else if (e.button == 1) pickColor(cube);
             } else if (e.pointerType === "touch") {
               started = true;
               breakTimeout = setTimeout(breakFunction, 200);
@@ -367,6 +375,7 @@
 
           cube.addEventListener("pointerenter", () => {
             if (isBreaking) breakTimeout = setTimeout(breakFunction, 200);
+            if (isPicking) pickColor(cube);
           });
           cube.addEventListener("pointerleave", () => {
             clearTimeout(breakTimeout);
@@ -395,6 +404,10 @@
         world.style.setProperty("translate", panX + "px " + panY + "px");
       }
 
+      function zoomView(scale) {
+        world.style.scale = zoom = Math.max(0.1, Math.min(10, scale));
+      }
+
       function rotate(angle) {
         rotation = Math.round(angle / 90) * 90;
         if (rotation >= 360 || rotation < 0) rotation -= Math.floor(rotation / 360) * 360;
@@ -406,7 +419,6 @@
       function getURL() {
         const url = new URL(window.location.href.split("?")[0]);
         url.searchParams.set("c", serialize());
-        console.log(serialize());
         return url.href;
       }
 
@@ -437,6 +449,7 @@
         }
         isPanning = false;
         isBreaking = false;
+        isPicking = false;
       });
 
       view.addEventListener("wheel", (e) => {
@@ -448,14 +461,22 @@
         world.style.scale = zoom;
       });
 
+      colorPicker.addEventListener("pointerdown", (e) => {
+        isPicking = true;
+      });
+
       view.addEventListener("contextmenu", (e) => e.preventDefault());
 
       rotator.addEventListener("input", (e) => rotate(rotator.value));
 
-      colorPicker.addEventListener("input", (e) => (currColor = colorPicker.value));
+      colorPicker.addEventListener("input", (e) => {
+        currColor = colorPicker.value;
+      });
       saveBtn.addEventListener("click", save);
       file.addEventListener("input", (e) => open(file.files[0]));
-      file.addEventListener("click", () => (file.value = null));
+      file.addEventListener("click", () => {
+        file.value = null;
+      });
 
       document.addEventListener("keydown", (e) => {
         if (e.code === "KeyC" && e.ctrlKey) {
@@ -498,12 +519,35 @@
           e.preventDefault();
           rotate(rotation + 90);
         }
+        if (e.code === "ArrowLeft") {
+          e.preventDefault();
+          pan(25 * zoom, 0);
+        }
+        if (e.code === "ArrowRight") {
+          e.preventDefault();
+          pan(-25 * zoom, 0);
+        }
+        if (e.code === "ArrowUp") {
+          e.preventDefault();
+          pan(0, 25 * zoom);
+        }
+        if (e.code === "ArrowDown") {
+          e.preventDefault();
+          pan(0, -25 * zoom);
+        }
+        if (e.code === "NumpadAdd") {
+          e.preventDefault();
+          zoomView(zoom * 1.25);
+        }
+        if (e.code === "NumpadSubtract") {
+          e.preventDefault();
+          zoomView(zoom * 0.75);
+        }
       });
 
       window.addEventListener("load", () => {
         const lastSave = getStoredSave();
         const urlParameter = new URLSearchParams(window.location.search);
-        console.log(urlParameter.get("c"));
         if (urlParameter.has("c")) deserialize(urlParameter.get("c"));
         else if (lastSave) deserialize(lastSave);
         else placeCube(0, 0, 0);
