@@ -471,6 +471,12 @@
           const worldPos = worldCoords(e.clientX, e.clientY);
           placeCube(worldPos.x, 0, worldPos.z);
         }
+        if (isPicking) {
+          const elementAt = document.elementFromPoint(e.clientX, e.clientY);
+          if (elementAt.classList.contains("cube")) {
+            pickColor(elementAt);
+          }
+        }
         isPanning = false;
         isBreaking = false;
         isPicking = false;
