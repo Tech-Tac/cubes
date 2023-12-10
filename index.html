@@ -132,7 +132,9 @@
   </head>
   <body>
     <div class="view">
-      <div class="world"></div>
+      <div class="world">
+        <div class="cube-container"></div>
+      </div>
       <div class="hud">
         <input type="color" class="color-picker" value="#ff0000" />
         <div class="rotator-wrapper">
@@ -149,6 +151,7 @@
     <script>
       const view = document.getElementsByClassName("view")[0];
       const world = document.getElementsByClassName("world")[0];
+      const container = document.getElementsByClassName("cube-container")[0];
       const colorPicker = document.getElementsByClassName("color-picker")[0];
       const rotator = document.getElementsByClassName("rotator")[0];
       const saveBtn = document.getElementsByClassName("btn-save")[0];
@@ -281,11 +284,9 @@
       }
 
       function putCubes(cubes) {
-        world.replaceChildren(...cubes);
+        container.replaceChildren(...cubes);
         storeSave();
       }
-
-      world.classList.contains("");
 
       function putHistory() {
         putCubes(getHistory());
@@ -403,7 +404,7 @@
             clearTimeout(breakTimeout);
           });
 
-          world.appendChild(cube);
+          container.appendChild(cube);
           if (addToHistory) addHistory();
           setTimeout(() => cube.classList.remove("placing"), 100);
           playSound();
