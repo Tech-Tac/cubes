@@ -9,6 +9,7 @@ Try at <https://tech-tac.github.io/cubes>
 - `LMB`: Place cube
 - `RMB`: Break cube
 - `MMB`: Pick color
+- `drag color-picker to cube`: Pick color
 - `wheel up`: Zoom in
 - `wheel down`: Zoom out
 - `drag`: Pan
