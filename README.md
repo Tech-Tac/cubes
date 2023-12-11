@@ -7,6 +7,7 @@ Try at <https://tech-tac.github.io/cubes>
 ## Controls
 
 - `LMB`: Place cube
+- `shift` + `LMB`: Place cube (opposite face)
 - `RMB`: Break cube
 - `MMB`: Pick color
 - `drag color-picker to cube`: Pick color

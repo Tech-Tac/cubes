@@ -364,7 +364,8 @@
             if (angle > -2.67785867 && angle < -0.46373398) newY++; //
             else if (angle > -0.46373398 && angle < 1.5708) newX++; // Unintentionally equal line widths lol
             else if (angle > 1.5708 || angle < -2.67785867) newZ++; //
-            const rotated = rotCoords(newX, newZ);
+            const rotated = e.shiftKey ? rotCoords(-newX, -newZ) : rotCoords(newX, newZ);
+            if (e.shiftKey) newY *= -1;
             placeCube(x + rotated.x, y + newY, z + rotated.z);
           }
 
