@@ -171,6 +171,11 @@
       let isPicking = false;
       let muted = false;
 
+      let initialFingerDistance = 0;
+      let initialScale = 1;
+      let currentScale = 1;
+      let isPinching = false;
+
       function getCubes() {
         return document.querySelectorAll(".cube:not(.breaking)");
       }
@@ -378,13 +383,13 @@
           let breakTimeout;
           let started = false;
           cube.addEventListener("pointerdown", (e) => {
-            if (e.pointerType !== "touch") {
+            if (e.pointerType !== "touch" && !isPinching) {
               if (e.button == 0) placeAdjacent(e);
               else if (e.button == 2) {
                 breakCube(cube);
                 isBreaking = true;
               } else if (e.button == 1) pickColor(cube);
-            } else if (e.pointerType === "touch") {
+            } else if (e.pointerType === "touch" && !isPinching) {
               started = true;
               breakTimeout = setTimeout(breakFunction, 200);
             }
@@ -470,11 +475,11 @@
         }
       });
       view.addEventListener("pointerup", (e) => {
-        if (isPanning && e.target === view && e.button !== 2 && (e.clientX - downPos.x === 0 || e.clientY - downPos.y === 0)) {
+        if (!isPinching && isPanning && e.target === view && e.button !== 2 && e.clientX - downPos.x === 0 && e.clientY - downPos.y === 0) {
           const worldPos = worldCoords(e.clientX, e.clientY);
           placeCube(worldPos.x, 0, worldPos.z);
         }
-        if (isPicking) {
+        if (isPicking && !isPinching) {
           const elementAt = document.elementFromPoint(e.clientX, e.clientY);
           if (elementAt.classList.contains("cube")) {
             pickColor(elementAt);
@@ -508,6 +513,41 @@
       file.addEventListener("click", () => {
         file.value = null;
       });
+
+      function handleTouchStart(event) {
+        if (event.touches.length === 2) {
+          isPinching = true;
+          initialFingerDistance = getFingerDistance(event.touches[0], event.touches[1]);
+          initialScale = currentScale;
+        }
+      }
+
+      function handleTouchMove(event) {
+        if (isPinching && event.touches.length === 2) {
+          const newFingerDistance = getFingerDistance(event.touches[0], event.touches[1]);
+          const scale = (newFingerDistance / initialFingerDistance) * initialScale;
+          currentScale = Math.min(Math.max(0.1, scale), 10);
+
+          const deltaX = event.touches[1].pageX - event.touches[0].pageX;
+          const deltaY = event.touches[1].pageY - event.touches[0].pageY;
+
+          zoomView(currentScale);
+        }
+      }
+
+      function handleTouchEnd() {
+        isPinching = false;
+      }
+
+      function getFingerDistance(touch1, touch2) {
+        const dx = touch1.pageX - touch2.pageX;
+        const dy = touch1.pageY - touch2.pageY;
+        return Math.sqrt(dx * dx + dy * dy);
+      }
+
+      view.addEventListener("touchstart", handleTouchStart);
+      view.addEventListener("touchmove", handleTouchMove);
+      view.addEventListener("touchend", handleTouchEnd);
 
       document.addEventListener("keydown", (e) => {
         if (e.code === "KeyC" && e.ctrlKey) {
