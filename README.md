@@ -36,6 +36,7 @@ Try at <https://tech-tac.github.io/cubes>
 
 - `tap`: Place cube
 - `long press`: Break cube
+- `pinch`: Zoom
 - `swipe`: Pan
 
 ## Credits
