@@ -31,6 +31,7 @@ Try at <https://tech-tac.github.io/cubes>
 - `ctrl` + `o`: Open file...
 - `ctrl` + `r`: Clear all cubes
 - `ctrl` + `shift` + `c`: Share build link
+- `ctrl` + `p`: Play "Bad Apple!!"
 
 ### Touch
 
