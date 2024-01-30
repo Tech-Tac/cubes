@@ -49,7 +49,7 @@
         margin-top: -50px;
         z-index: calc(var(--x) + var(--y) + var(--z));
         clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-        transition: filter 200ms, scale 100ms, left 200ms, top 200ms;
+        transition: filter 200ms, scale 100ms, left 200ms, top 200ms, background-color 200ms;
       }
       .cube:hover {
         filter: brightness(0.75);
@@ -128,6 +128,17 @@
       .save-load {
         float: right;
       }
+
+      .author {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        width: fit-content;
+        font-size: 16pt;
+        color: white;
+      }
     </style>
   </head>
   <body>
@@ -146,7 +157,8 @@
           <button type="button" class="btn-save">Save</button>
           <button type="button" class="btn-load" onclick="file.click()">load<input type="file" hidden id="file" class="load-file" /></button>
         </div>
-        <!-- <div class="list"></div> -->
+
+        <a href="https://github.com/Tech-Tac" target="_blank" class="author">@Tech-Tac</a>
       </div>
     </div>
     <script>
@@ -416,6 +428,7 @@
           setTimeout(() => cube.classList.remove("placing"), 100);
           playSound();
           console.log("Placed a cube at ", x, y, z, " with color ", color);
+          return cube;
         }
       }
 
