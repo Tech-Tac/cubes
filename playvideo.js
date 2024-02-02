@@ -6,25 +6,27 @@ const ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false;
 canvas.width = width;
 canvas.height = height;
-const fps = 60;
+const fps = 30;
 const url = "Bad Apple.mp4";
 const last = [];
-//let timer;
 let end = false;
+let cubes = [];
 
 const init = () => {
   console.log("Starting...");
+  container.innerHTML = "";
+  toggleMuted(true);
+  for (let i = 0; i < width * height; i++) cubes.push(placeCube((i % width) - width / 2, 0, Math.floor(i / width) - height / 2, "#000", true, false));
   video.addEventListener("play", draw);
   video.addEventListener("loadeddata", () => {
     if (video.readyState >= 3) {
       console.log("Loaded.");
-      toggleMuted(true);
       video.play();
     }
   });
   video.addEventListener("ended", () => {
     end = true;
-    //clearTimeout(timer);
+    toggleMuted();
     canvas.remove();
     video.remove();
   });
@@ -45,8 +47,9 @@ const init = () => {
 
   panX = 0;
   panY = 0;
-  zoomView((Math.max(width, height) * 16) / Math.min(innerWidth, innerHeight));
-  pan(width * -10, height * 6);
+  zoom = 1;
+  pan(0, 0);
+  zoomView(Math.min(innerWidth, innerHeight) / (Math.max(width, height) * 75));
 };
 
 let lastFrameTimestamp = 0;
@@ -55,7 +58,6 @@ const draw = (timestamp = 0) => {
   if (timestamp - lastFrameTimestamp >= 1000 / fps) {
     ctx.drawImage(video, 0, 0, width, height);
     placeFrameCubes();
-    //timer = setTimeout(draw, 1000 / fps);
     lastFrameTimestamp = timestamp;
   }
 };
@@ -70,22 +72,15 @@ const rgbToHex = (r, g, b) => {
 };
 
 const placeFrameCubes = () => {
-  container.innerHTML = "";
   const frame = ctx.getImageData(0, 0, width, height).data;
-  let x = 0;
-  let y = 0;
   for (let i = 0; i < frame.length; i += 4) {
+    const p = i / 4;
     const pixel = [frame[i], frame[i + 1], frame[i + 2]];
-    //const grayscale = (pixel[0] + pixel[1] + pixel[2]) / (255 * 3);
-    //const color = grayscale >= 0.5 ? "#fff" : "#000";
+    const grayscale = (pixel[0] + pixel[1] + pixel[2]) / (255 * 3);
     const color = rgbToHex(...pixel);
-    const cube = placeCube(x, height - y, 0, color, true, false);
-    cube.classList.remove("placing");
-    x++;
-    if (x > width - 1) {
-      x = 0;
-      y++;
-    }
+    cubes[p].color = color;
+    cubes[p].style.backgroundColor = color;
+    cubes[p].style.setProperty("--y", grayscale);
   }
 };
 
