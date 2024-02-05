@@ -32,6 +32,8 @@
         transform-origin: 0 0;
         translate: 0 0;
         scale: 1;
+      }
+      .world.animate {
         transition: scale 200ms;
       }
       .cube {
@@ -143,7 +145,7 @@
   </head>
   <body>
     <div class="view">
-      <div class="world">
+      <div class="world animate">
         <div class="cube-container"></div>
       </div>
       <div class="hud">
@@ -387,9 +389,11 @@
           }
 
           function breakFunction() {
-            breakCube(cube);
-            isBreaking = true;
-            started = false;
+            if (!isPinching) {
+              breakCube(cube);
+              isBreaking = true;
+              started = false;
+            }
           }
 
           let breakTimeout;
@@ -456,7 +460,8 @@
       function rotate(angle) {
         rotation = Math.round(angle / 90) * 90;
         if (rotation >= 360 || rotation < 0) rotation -= Math.floor(rotation / 360) * 360;
-        world.className = `world rot-${rotation}`;
+        for (let a = 0; a <= 4; a++) world.classList.remove("rot-" + a * 90);
+        world.classList.add(`rot-${rotation}`);
         rotator.value = rotation;
         return rotation;
       }
@@ -532,6 +537,7 @@
           isPinching = true;
           initialFingerDistance = getFingerDistance(event.touches[0], event.touches[1]);
           initialScale = currentScale;
+          world.classList.remove("animate");
         }
       }
 
@@ -550,6 +556,7 @@
 
       function handleTouchEnd() {
         isPinching = false;
+        world.classList.add("animate");
       }
 
       function getFingerDistance(touch1, touch2) {
