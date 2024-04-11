@@ -10,7 +10,7 @@ const defaultURL = "Bad Apple.mp4";
 let end = false;
 let cubes = [];
 
-const init = (url = defaultURL) => {
+const init = (url = defaultURL, preview = true) => {
   console.log("Starting...");
   end = false;
   video.pause();
@@ -38,6 +38,7 @@ const init = (url = defaultURL) => {
   video.style.left = "0";
   video.style.bottom = "0";
   video.style.width = "256px";
+  video.hidden = !preview;
   document.body.appendChild(video);
   video.load();
 
@@ -83,24 +84,26 @@ const placeFrameCubes = () => {
   }
 };
 let isBeingRickRolled = false;
+
+function rickRoll() {
+  init("Never Gonna Give You Up.mp4", false);
+  isBeingRickRolled = true;
+  localStorage.setItem("gotRickRolled", true);
+}
 document.addEventListener("keydown", (e) => {
   if (e.code === "KeyP" && e.ctrlKey) {
     e.preventDefault();
     init();
   } else if (e.code === "KeyD" && e.ctrlKey) {
     e.preventDefault();
-    init("Never Gonna Give You Up.mp4");
-    isBeingRickRolled = true;
-    localStorage.setItem("gotRickRolled", true);
+    rickRoll();
   }
 });
 
 if (!localStorage.getItem("gotRickRolled")) {
   document.addEventListener("click", () => {
     if (!localStorage.getItem("gotRickRolled") && !isBeingRickRolled) {
-      init("Never Gonna Give You Up.mp4");
-      isBeingRickRolled = true;
-      localStorage.setItem("gotRickRolled", true);
+      rickRoll();
     }
   });
 }
