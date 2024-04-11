@@ -493,7 +493,7 @@
           pan(e.movementX, e.movementY);
         }
         if (isDragging) {
-          const worldPos = worldCoords(e.clientX, e.clientY);
+          const worldPos = worldCoords(e.clientX, e.clientY + dragStartY * 50 * zoom);
           placeCube(worldPos.x, dragStartY, worldPos.z);
         }
       });
