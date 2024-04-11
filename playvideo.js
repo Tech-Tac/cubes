@@ -1,4 +1,4 @@
-const video = document.createElement("video");
+let video = document.createElement("video");
 const width = 24;
 const height = 18;
 const canvas = document.createElement("canvas");
@@ -6,16 +6,19 @@ const ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false;
 canvas.width = width;
 canvas.height = height;
-const fps = 30;
 const defaultURL = "Bad Apple.mp4";
-const last = [];
 let end = false;
 let cubes = [];
 
 const init = (url = defaultURL) => {
   console.log("Starting...");
+  end = false;
+  video.pause();
+  video.remove();
+  video = document.createElement("video");
   container.innerHTML = "";
   toggleMuted(true);
+  cubes = [];
   for (let i = 0; i < width * height; i++) cubes.push(placeCube((i % width) - width / 2, 0, Math.floor(i / width) - height / 2, "#000", true, false));
   video.addEventListener("play", draw);
   video.addEventListener("loadeddata", () => {
@@ -27,8 +30,6 @@ const init = (url = defaultURL) => {
   video.addEventListener("ended", () => {
     end = true;
     toggleMuted();
-    canvas.remove();
-    video.remove();
   });
   video.src = url;
   video.style.position = "absolute";
@@ -52,14 +53,10 @@ const init = (url = defaultURL) => {
   zoomView(Math.min(innerWidth, innerHeight) / (Math.max(width, height) * 75));
 };
 
-let lastFrameTimestamp = 0;
-const draw = (timestamp = 0) => {
+const draw = () => {
   if (!end) requestAnimationFrame(draw);
-  if (timestamp - lastFrameTimestamp >= 1000 / fps) {
-    ctx.drawImage(video, 0, 0, width, height);
-    placeFrameCubes();
-    lastFrameTimestamp = timestamp;
-  }
+  ctx.drawImage(video, 0, 0, width, height);
+  placeFrameCubes();
 };
 
 const componentToHex = (c) => {
@@ -76,14 +73,14 @@ const placeFrameCubes = () => {
   for (let i = 0; i < frame.length; i += 4) {
     const p = i / 4;
     const pixel = [frame[i], frame[i + 1], frame[i + 2]];
-    const grayscale = (pixel[0] + pixel[1] + pixel[2]) / (255 * 3);
+    //const grayscale = (pixel[0] + pixel[1] + pixel[2]) / (255 * 3);
     const color = rgbToHex(...pixel);
     cubes[p].color = color;
     cubes[p].style.backgroundColor = color;
-    cubes[p].style.setProperty("--y", grayscale);
+    //cubes[p].style.setProperty("--y", grayscale);
   }
 };
-
+let isBeingRickRolled = false;
 document.addEventListener("keydown", (e) => {
   if (e.code === "KeyP" && e.ctrlKey) {
     e.preventDefault();
@@ -91,14 +88,16 @@ document.addEventListener("keydown", (e) => {
   } else if (e.code === "KeyD" && e.ctrlKey) {
     e.preventDefault();
     init("Never Gonna Give You Up.mp4");
+    isBeingRickRolled = true;
     localStorage.setItem("gotRickRolled", true);
   }
 });
 
 if (!localStorage.getItem("gotRickRolled")) {
   document.addEventListener("click", () => {
-    if (!localStorage.getItem("gotRickRolled")) {
+    if (!localStorage.getItem("gotRickRolled") && !isBeingRickRolled) {
       init("Never Gonna Give You Up.mp4");
+      isBeingRickRolled = true;
       localStorage.setItem("gotRickRolled", true);
     }
   });

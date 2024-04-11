@@ -51,7 +51,7 @@
         margin-top: -50px;
         z-index: calc(var(--x) + var(--y) + var(--z));
         clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-        transition: filter 200ms, scale 100ms, left 200ms, top 100ms;
+        transition: filter 200ms, scale 100ms, left 200ms ease-in-out, top 200ms ease-in-out;
       }
       .cube:hover {
         filter: brightness(0.75);
