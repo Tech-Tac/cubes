@@ -185,6 +185,8 @@
       let initialScale = 1;
       let currentScale = 1;
       let isPinching = false;
+      let isDragging = false;
+      let dragStartY = 0;
 
       function getCubes() {
         return document.querySelectorAll(".cube:not(.breaking)");
@@ -403,7 +405,7 @@
               } else if (e.button == 1) pickColor(cube);
             } else if (e.pointerType === "touch" && !isPinching) {
               started = true;
-              breakTimeout = setTimeout(breakFunction, 200);
+              breakTimeout = setTimeout(breakFunction, 250);
             }
           });
           cube.addEventListener("pointerup", (e) => {
@@ -416,7 +418,7 @@
           });
 
           cube.addEventListener("pointerenter", () => {
-            if (isBreaking) breakTimeout = setTimeout(breakFunction, 200);
+            if (isBreaking) breakTimeout = setTimeout(breakFunction, 100);
             if (isPicking) pickColor(cube);
           });
           cube.addEventListener("pointerleave", () => {
@@ -478,14 +480,21 @@
 
       let downPos = { x: 0, y: 0 };
       view.addEventListener("pointerdown", (e) => {
-        if (e.target === view) {
+        if (e.target === view && !e.altKey) {
           isPanning = true;
           downPos = { x: e.clientX, y: e.clientY };
+        } else if (e.altKey) {
+          isDragging = true;
+          dragStartY = e.target.style.getPropertyValue("--y") || 0;
         }
       });
       view.addEventListener("pointermove", (e) => {
         if (isPanning) {
           pan(e.movementX, e.movementY);
+        }
+        if (isDragging) {
+          const worldPos = worldCoords(e.clientX, e.clientY);
+          placeCube(worldPos.x, dragStartY, worldPos.z);
         }
       });
       view.addEventListener("pointerup", (e) => {
@@ -502,6 +511,7 @@
         isPanning = false;
         isBreaking = false;
         isPicking = false;
+        isDragging = false;
       });
 
       view.addEventListener("wheel", (e) => {
