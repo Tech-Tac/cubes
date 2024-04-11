@@ -30,6 +30,7 @@ const init = (url = defaultURL) => {
   video.addEventListener("ended", () => {
     end = true;
     toggleMuted();
+    video.remove();
   });
   video.src = url;
   video.style.position = "absolute";
