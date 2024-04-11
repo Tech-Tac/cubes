@@ -31,6 +31,7 @@ const init = (url = defaultURL) => {
     end = true;
     toggleMuted();
     video.remove();
+    ctx.clearRect(0, 0, width, height);
   });
   video.src = url;
   video.style.position = "absolute";
