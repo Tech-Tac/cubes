@@ -32,6 +32,7 @@ Try at <https://tech-tac.github.io/cubes>
 - `ctrl` + `r`: Clear all cubes
 - `ctrl` + `shift` + `c`: Share build link
 - `ctrl` + `p`: Play "Bad Apple!!"
+- `ctrl` + `d`: ...
 
 ### Touch
 

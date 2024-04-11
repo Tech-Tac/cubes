@@ -7,12 +7,12 @@ ctx.imageSmoothingEnabled = false;
 canvas.width = width;
 canvas.height = height;
 const fps = 30;
-const url = "Bad Apple.mp4";
+const defaultURL = "Bad Apple.mp4";
 const last = [];
 let end = false;
 let cubes = [];
 
-const init = () => {
+const init = (url = defaultURL) => {
   console.log("Starting...");
   container.innerHTML = "";
   toggleMuted(true);
@@ -38,12 +38,12 @@ const init = () => {
   document.body.appendChild(video);
   video.load();
 
-  canvas.style.position = "absolute";
+  /* canvas.style.position = "absolute";
   canvas.style.right = "0";
   canvas.style.bottom = "0";
   canvas.style.width = "256px";
   canvas.style.imageRendering = "pixelated";
-  document.body.appendChild(canvas);
+  document.body.appendChild(canvas); */
 
   panX = 0;
   panY = 0;
@@ -88,5 +88,18 @@ document.addEventListener("keydown", (e) => {
   if (e.code === "KeyP" && e.ctrlKey) {
     e.preventDefault();
     init();
+  } else if (e.code === "KeyD" && e.ctrlKey) {
+    e.preventDefault();
+    init("Never Gonna Give You Up.mp4");
+    localStorage.setItem("gotRickRolled", true);
   }
 });
+
+if (!localStorage.getItem("gotRickRolled")) {
+  document.addEventListener("click", () => {
+    if (!localStorage.getItem("gotRickRolled")) {
+      init("Never Gonna Give You Up.mp4");
+      localStorage.setItem("gotRickRolled", true);
+    }
+  });
+}
