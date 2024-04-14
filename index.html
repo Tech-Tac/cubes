@@ -12,11 +12,13 @@
       * {
         box-sizing: border-box;
       }
+
       body {
         margin: 0;
         overflow: hidden;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       }
+
       .view {
         overflow: hidden;
         background-color: #808080;
@@ -25,6 +27,7 @@
         width: 100vw;
         height: 100vh;
       }
+
       .world {
         position: absolute;
         left: 50%;
@@ -33,9 +36,11 @@
         translate: 0 0;
         scale: 1;
       }
+
       .world.animate {
         transition: scale 200ms;
       }
+
       .cube {
         --x: 0;
         --y: 0;
@@ -53,17 +58,21 @@
         clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
         transition: filter 200ms, scale 100ms, left 200ms ease-in-out, top 200ms ease-in-out;
       }
+
       .cube:hover {
         filter: brightness(0.75);
         scale: 1.1;
       }
+
       .cube:active {
         filter: brightness(0.5);
         scale: 0.9;
       }
+
       .cube.placing {
         animation: cube-place 100ms ease-in-out;
       }
+
       .cube.breaking {
         animation: cube-break 150ms ease-out forwards;
         pointer-events: none;
@@ -74,16 +83,19 @@
         top: calc((var(--x) + var(--z)) * 25px - var(--y) * 50px);
         z-index: calc(var(--x) + var(--y) + var(--z));
       }
+
       .world.rot-90 .cube {
         left: calc((var(--z) * -1 - var(--x)) * 50px);
         top: calc((var(--z) * -1 + var(--x)) * 25px - var(--y) * 50px);
         z-index: calc(var(--x) + var(--y) + var(--z) * -1);
       }
+
       .world.rot-180 .cube {
         left: calc((var(--x) * -1 - var(--z) * -1) * 50px);
         top: calc((var(--x) * -1 + var(--z) * -1) * 25px - var(--y) * 50px);
         z-index: calc(var(--x) * -1 + var(--y) + var(--z) * -1);
       }
+
       .world.rot-270 .cube {
         left: calc((var(--z) - var(--x) * -1) * 50px);
         top: calc((var(--z) + var(--x) * -1) * 25px - var(--y) * 50px);
@@ -96,6 +108,7 @@
           opacity: 0;
         }
       }
+
       @keyframes cube-break {
         to {
           scale: 1.5;
@@ -137,8 +150,102 @@
         font-size: 16pt;
         color: white;
       }
+
+      .btn-help {
+        position: fixed;
+        bottom: 1em;
+        left: 1em;
+        font-size: 16pt;
+      }
+
+      dialog {
+        text-align: center;
+        border: none;
+        outline: none;
+        background-color: white;
+        box-shadow: 0 0 14px #0004;
+        padding-top: 0;
+        padding-bottom: 0;
+        overflow: visible;
+        width: 512px;
+      }
+
+      dialog::before,
+      dialog::after {
+        content: "";
+        position: absolute;
+        transform: translate(-50%);
+        border-left: 256px solid transparent;
+        border-right: 256px solid transparent;
+        box-sizing: content-box;
+      }
+
+      dialog::before {
+        bottom: 100%;
+        border-bottom: 64px solid white;
+      }
+
+      dialog::after {
+        top: 100%;
+        border-top: 64px solid white;
+      }
+
+      .btn-close {
+        appearance: none;
+        background-color: #888;
+        color: white;
+        position: absolute;
+        transform: translate(-50%, -50%);
+        left: 50%;
+        width: 32pt;
+        height: 32pt;
+        font-size: 24pt;
+        font-family: monospace;
+        border: none;
+        outline: none;
+        margin-top: -32px;
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        transition: background-color 100ms;
+      }
+
+      .btn-close::before {
+        content: var(--icon, "?");
+      }
+
+      .btn-close:is(:hover, :focus-visible) {
+        background-color: #f00;
+      }
+
+      .btn-close:is(:hover, :focus-visible):before {
+        content: "X";
+      }
+
+      .btn-close:active {
+        background-color: #800;
+      }
+
+      .content {
+        text-align: left;
+        max-height: 512px;
+        overflow: auto;
+        scrollbar-width: thin;
+        animation: open 250ms ease-in-out;
+      }
+
+      @keyframes open {
+        from {
+          max-height: 0;
+        }
+      }
+
+      @keyframes close {
+        to {
+          max-height: 0;
+        }
+      }
     </style>
   </head>
+
   <body>
     <div class="view">
       <div class="world animate">
@@ -156,8 +263,55 @@
           <button type="button" class="btn-load" onclick="file.click()">load<input type="file" hidden id="file" class="load-file" /></button>
         </div>
 
+        <button class="btn-help">?</button>
         <a href="https://github.com/Tech-Tac" target="_blank" class="author">@Tech-Tac</a>
       </div>
+    </div>
+    <div class="gui">
+      <dialog id="dlg-help">
+        <button autofocus title="Close" class="btn-close" style="--icon: '?'"></button>
+        <div class="content">
+          <p>2.5D Colored cube voxel-art editor</p>
+          <h2 id="controls">Controls</h2>
+          <ul>
+            <li><code>LMB</code>: Place cube</li>
+            <li><code>shift</code> + <code>LMB</code>: Place cube (opposite face)</li>
+            <li><code>alt</code> + <code>drag</code>: Draw with cubes</li>
+            <li><code>RMB</code>: Break cube</li>
+            <li><code>MMB</code>: Pick color</li>
+            <li><code>drag color-picker to cube</code>: Pick color</li>
+            <li><code>wheel up</code>: Zoom in</li>
+            <li><code>wheel down</code>: Zoom out</li>
+            <li><code>drag</code>: Pan</li>
+            <li><code>leftarrow</code>: Pan left</li>
+            <li><code>rightarrow</code>: Pan right</li>
+            <li><code>uparrow</code>: Pan up</li>
+            <li><code>downarrow</code>: Pan down</li>
+            <li><code>+</code> (numpad): Zoom in</li>
+            <li><code>-</code> (numpad): Zoom out</li>
+            <li><code>&gt;</code> (<code>.</code>): Rotate view by 90°deg clockwise</li>
+            <li><code>&lt;</code> (<code>,</code>): Rotate view by 90°deg counterclockwise</li>
+            <li><code>m</code>: Toggle mute</li>
+            <li><code>ctrl</code> + <code>z</code>: Undo</li>
+            <li><code>ctrl</code> + <code>y</code>: Redo</li>
+            <li><code>ctrl</code> + <code>c</code>: Copy cubes</li>
+            <li><code>ctrl</code> + <code>v</code>: Paste Cubes</li>
+            <li><code>ctrl</code> + <code>s</code>: Save</li>
+            <li><code>ctrl</code> + <code>o</code>: Open file...</li>
+            <li><code>ctrl</code> + <code>r</code>: Clear all cubes</li>
+            <li><code>ctrl</code> + <code>shift</code> + <code>c</code>: Share build link</li>
+            <li><code>ctrl</code> + <code>p</code>: Play &quot;Bad Apple!!&quot;</li>
+            <li><code>ctrl</code> + <code>d</code>: ...</li>
+          </ul>
+          <h3 id="touch">Touch</h3>
+          <ul>
+            <li><code>tap</code>: Place cube</li>
+            <li><code>long press</code>: Break cube</li>
+            <li><code>pinch</code>: Zoom</li>
+            <li><code>swipe</code>: Pan</li>
+          </ul>
+        </div>
+      </dialog>
     </div>
     <script>
       const view = document.getElementsByClassName("view")[0];
@@ -167,6 +321,9 @@
       const rotator = document.getElementsByClassName("rotator")[0];
       const saveBtn = document.getElementsByClassName("btn-save")[0];
       const loadBtn = document.getElementsByClassName("btn-load")[0];
+      const helpBtn = document.getElementsByClassName("btn-help")[0];
+      const helpDialog = document.getElementById("dlg-help");
+      const closeBtn = document.getElementsByClassName("btn-close")[0];
       const file = document.getElementById("file");
 
       let currColor = "#ff0000";
@@ -645,6 +802,9 @@
           toggleMuted();
         }
       });
+
+      helpBtn.addEventListener("click", () => helpDialog.showModal());
+      closeBtn.addEventListener("click", () => helpDialog.close());
 
       window.addEventListener("load", () => {
         rotate(rotation);
