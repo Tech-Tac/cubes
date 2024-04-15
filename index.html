@@ -49,13 +49,18 @@
         width: 100px;
         height: 100px;
         background-color: #f00;
-        background-image: conic-gradient(from -63.43deg at center, #fff4 0deg 126.86deg, #0004 126.86deg 243.43deg, #0000 243.43deg 360deg);
-        left: calc((var(--x) - var(--z)) * 50px);
+        background-image: conic-gradient(
+          from -1.0636978224025597rad at center,
+          #fff4 0deg 2.1273956448051194rad,
+          #0004 2.1273956448051194rad 4.205290475992353rad,
+          #0000 4.205290475992353rad 360deg
+        );
+        left: calc((var(--x) - var(--z)) * 45px);
         top: calc((var(--x) + var(--z)) * 25px - var(--y) * 50px);
-        margin-left: -50px;
-        margin-top: -50px;
+        margin-left: -45px;
+        margin-top: -45px;
         z-index: calc(var(--x) + var(--y) + var(--z));
-        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
         transition: filter 200ms, scale 100ms, left 200ms ease-in-out, top 200ms ease-in-out;
       }
 
@@ -79,25 +84,25 @@
       }
 
       .world.rot-0 .cube {
-        left: calc((var(--x) - var(--z)) * 50px);
+        left: calc((var(--x) - var(--z)) * 45px);
         top: calc((var(--x) + var(--z)) * 25px - var(--y) * 50px);
         z-index: calc(var(--x) + var(--y) + var(--z));
       }
 
       .world.rot-90 .cube {
-        left: calc((var(--z) * -1 - var(--x)) * 50px);
+        left: calc((var(--z) * -1 - var(--x)) * 45px);
         top: calc((var(--z) * -1 + var(--x)) * 25px - var(--y) * 50px);
         z-index: calc(var(--x) + var(--y) + var(--z) * -1);
       }
 
       .world.rot-180 .cube {
-        left: calc((var(--x) * -1 - var(--z) * -1) * 50px);
+        left: calc((var(--x) * -1 - var(--z) * -1) * 45px);
         top: calc((var(--x) * -1 + var(--z) * -1) * 25px - var(--y) * 50px);
         z-index: calc(var(--x) * -1 + var(--y) + var(--z) * -1);
       }
 
       .world.rot-270 .cube {
-        left: calc((var(--z) - var(--x) * -1) * 50px);
+        left: calc((var(--z) - var(--x) * -1) * 45px);
         top: calc((var(--z) + var(--x) * -1) * 25px - var(--y) * 50px);
         z-index: calc(var(--x) * -1 + var(--y) + var(--z));
       }
@@ -204,7 +209,7 @@
         border: none;
         outline: none;
         margin-top: -32px;
-        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
         transition: background-color 100ms;
       }
 
@@ -271,7 +276,6 @@
       <dialog id="dlg-help">
         <button autofocus title="Close" class="btn-close" style="--icon: '?'"></button>
         <div class="content">
-          <p>2.5D Colored cube voxel-art editor</p>
           <h2 id="controls">Controls</h2>
           <ul>
             <li><code>LMB</code>: Place cube</li>
@@ -362,8 +366,8 @@
 
       function worldCoords(screenX, screenY) {
         return rotCoords(
-          Math.round(((screenX - (innerWidth / 2 + panX * zoom)) / (50 * zoom) + (screenY - (innerHeight / 2 + panY * zoom)) / (25 * zoom)) / 2),
-          Math.round(((screenY - (innerHeight / 2 + panY * zoom)) / (25 * zoom) - (screenX - (innerWidth / 2 + panX * zoom)) / (50 * zoom)) / 2)
+          Math.round(((screenX - (innerWidth / 2 + panX * zoom)) / (45 * zoom) + (screenY - (innerHeight / 2 + panY * zoom)) / (25 * zoom)) / 2),
+          Math.round(((screenY - (innerHeight / 2 + panY * zoom)) / (25 * zoom) - (screenX - (innerWidth / 2 + panX * zoom)) / (45 * zoom)) / 2)
         );
       }
 
@@ -531,13 +535,13 @@
           cube.style.backgroundColor = color;
 
           function placeAdjacent(e) {
-            const angle = angleFromPoints(50, 50, e.offsetX, e.offsetY);
+            const angle = angleFromPoints(45, 50, e.offsetX, e.offsetY);
             let newX = 0;
             let newY = 0;
             let newZ = 0;
-            if (angle > -2.67785867 && angle < -0.46373398) newY++; //
-            else if (angle > -0.46373398 && angle < 1.5708) newX++; // Unintentionally equal line widths lol
-            else if (angle > 1.5708 || angle < -2.67785867) newZ++; //
+            if (angle > -2.5829933382462307 && angle <= -0.4636476090008061) newY++;
+            else if (angle > -0.4636476090008061 && angle <= 1.5707963267948966) newX++;
+            else if (angle > 1.5707963267948966 || angle <= 2.5829933382462307) newZ++;
             const rotated = e.shiftKey ? rotCoords(-newX, -newZ) : rotCoords(newX, newZ);
             if (e.shiftKey) newY *= -1;
             placeCube(x + rotated.x, y + newY, z + rotated.z);
