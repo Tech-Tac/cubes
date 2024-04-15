@@ -40,17 +40,34 @@ body {
   background-color: #f00;
   background-image: conic-gradient(
     from -1.0636978224025597rad at center,
-    #fff4 0deg 2.1273956448051194rad,
-    #0004 2.1273956448051194rad 4.205290475992353rad,
+    transparent 0deg 2.1273956448051194rad,
+    transparent 2.1273956448051194rad 4.205290475992353rad,
     #0000 4.205290475992353rad 360deg
   );
   left: calc((var(--x) - var(--z)) * 45px);
   top: calc((var(--x) + var(--z)) * 25px - var(--y) * 50px);
   margin-left: -45px;
   margin-top: -45px;
-  z-index: calc(var(--x) + var(--y) + var(--z));
   clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
   transition: filter 200ms, scale 100ms, left 200ms ease-in-out, top 200ms ease-in-out;
+}
+.cube::before {
+  content: "";
+  width: 100px;
+  height: 100px;
+  background-color: #fff4;
+  clip-path: polygon(50% 0%, 95% 25%, 50% 50%, 5% 25%);
+  position: absolute;
+  z-index: calc(var(--x) + var(--y) + var(--z));
+}
+.cube::after {
+  content: "";
+  width: 100px;
+  height: 100px;
+  background-color: #0004;
+  clip-path: polygon(95% 25%, 95% 75%, 50% 100%, 50% 50%);
+  position: absolute;
+  z-index: calc(var(--x) + var(--y) + var(--z));
 }
 
 .cube:hover {
