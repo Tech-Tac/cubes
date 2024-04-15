@@ -1,0 +1,239 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.view {
+  overflow: hidden;
+  background-color: #808080;
+  touch-action: none;
+  user-select: none;
+  width: 100vw;
+  height: 100vh;
+}
+
+.world {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-origin: 0 0;
+  translate: 0 0;
+  scale: 1;
+}
+
+.world.animate {
+  transition: scale 200ms;
+}
+
+.cube {
+  --x: 0;
+  --y: 0;
+  --z: 0;
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: #f00;
+  background-image: conic-gradient(
+    from -1.0636978224025597rad at center,
+    #fff4 0deg 2.1273956448051194rad,
+    #0004 2.1273956448051194rad 4.205290475992353rad,
+    #0000 4.205290475992353rad 360deg
+  );
+  left: calc((var(--x) - var(--z)) * 45px);
+  top: calc((var(--x) + var(--z)) * 25px - var(--y) * 50px);
+  margin-left: -45px;
+  margin-top: -45px;
+  z-index: calc(var(--x) + var(--y) + var(--z));
+  clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+  transition: filter 200ms, scale 100ms, left 200ms ease-in-out, top 200ms ease-in-out;
+}
+
+.cube:hover {
+  filter: brightness(0.75);
+  scale: 1.1;
+}
+
+.cube:active {
+  filter: brightness(0.5);
+  scale: 0.9;
+}
+
+.cube.placing {
+  animation: cube-place 100ms ease-in-out;
+}
+
+.cube.breaking {
+  animation: cube-break 150ms ease-out forwards;
+  pointer-events: none;
+}
+
+.world.rot-0 .cube {
+  left: calc((var(--x) - var(--z)) * 45px);
+  top: calc((var(--x) + var(--z)) * 25px - var(--y) * 50px);
+  z-index: calc(var(--x) + var(--y) + var(--z));
+}
+
+.world.rot-90 .cube {
+  left: calc((var(--z) * -1 - var(--x)) * 45px);
+  top: calc((var(--z) * -1 + var(--x)) * 25px - var(--y) * 50px);
+  z-index: calc(var(--x) + var(--y) + var(--z) * -1);
+}
+
+.world.rot-180 .cube {
+  left: calc((var(--x) * -1 - var(--z) * -1) * 45px);
+  top: calc((var(--x) * -1 + var(--z) * -1) * 25px - var(--y) * 50px);
+  z-index: calc(var(--x) * -1 + var(--y) + var(--z) * -1);
+}
+
+.world.rot-270 .cube {
+  left: calc((var(--z) - var(--x) * -1) * 45px);
+  top: calc((var(--z) + var(--x) * -1) * 25px - var(--y) * 50px);
+  z-index: calc(var(--x) * -1 + var(--y) + var(--z));
+}
+
+@keyframes cube-place {
+  from {
+    scale: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes cube-break {
+  to {
+    scale: 1.5;
+    opacity: 0;
+  }
+}
+
+.hud {
+  position: fixed;
+  padding: 1em;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  align-content: flex-start;
+}
+
+.rotator-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+}
+
+button {
+  font-size: 1em;
+}
+
+.author {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  width: fit-content;
+  font-size: 16pt;
+  color: white;
+}
+
+.btn-help {
+  position: fixed;
+  bottom: 1em;
+  left: 1em;
+  font-size: 16pt;
+}
+
+dialog {
+  text-align: center;
+  border: none;
+  outline: none;
+  background-color: white;
+  box-shadow: 0 0 14px #0004;
+  padding-top: 0;
+  padding-bottom: 0;
+  overflow: visible;
+  width: 512px;
+}
+
+dialog::before,
+dialog::after {
+  content: "";
+  position: absolute;
+  transform: translate(-50%);
+  border-left: 256px solid transparent;
+  border-right: 256px solid transparent;
+  box-sizing: content-box;
+}
+
+dialog::before {
+  bottom: 100%;
+  border-bottom: 64px solid white;
+}
+
+dialog::after {
+  top: 100%;
+  border-top: 64px solid white;
+}
+
+.btn-close {
+  appearance: none;
+  background-color: #888;
+  color: white;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  width: 32pt;
+  height: 32pt;
+  font-size: 24pt;
+  font-family: monospace;
+  border: none;
+  outline: none;
+  margin-top: -32px;
+  clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+  transition: background-color 100ms;
+}
+
+.btn-close::before {
+  content: var(--icon, "?");
+}
+
+.btn-close:is(:hover, :focus-visible) {
+  background-color: #f00;
+}
+
+.btn-close:is(:hover, :focus-visible):before {
+  content: "X";
+}
+
+.btn-close:active {
+  background-color: #800;
+}
+
+.content {
+  text-align: left;
+  max-height: 512px;
+  overflow: auto;
+  scrollbar-width: thin;
+  animation: open 250ms ease-in-out;
+}
+
+@keyframes open {
+  from {
+    max-height: 0;
+  }
+}
+
+@keyframes close {
+  to {
+    max-height: 0;
+  }
+}
