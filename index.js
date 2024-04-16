@@ -22,6 +22,7 @@ let isBreaking = false;
 let isPicking = false;
 let muted = false;
 
+let backupClipboard = "";
 let initialFingerDistance = 0;
 let initialScale = 1;
 let currentScale = 1;
@@ -152,13 +153,18 @@ function putHistory() {
 }
 
 function copyCubes() {
+  backupClipboard = serialize();
   window.navigator.clipboard.writeText(serialize()).then(() => {
     alert("Copied!");
   });
 }
 
 async function pasteCubes() {
-  deserialize(await window.navigator.clipboard.readText());
+  try {
+    deserialize(await window.navigator.clipboard.readText());
+  } catch (error) {
+    deserialize(backupClipboard)
+  }
 }
 
 function undo(steps = 1) {
@@ -206,7 +212,8 @@ function placeCube(x, y, z, color = currColor, force = false, addToHistory = tru
     x -= 0;
     y -= 0;
     z -= 0;
-    const cube = document.createElement("div");
+    
+    const cube = document.createElement("span");
     cube.className = "cube placing";
     cube.style.setProperty("--x", x);
     cube.style.setProperty("--y", y);
