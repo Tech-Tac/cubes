@@ -163,7 +163,7 @@ async function pasteCubes() {
   try {
     deserialize(await window.navigator.clipboard.readText());
   } catch (error) {
-    deserialize(backupClipboard)
+    deserialize(backupClipboard);
   }
 }
 
@@ -212,7 +212,7 @@ function placeCube(x, y, z, color = currColor, force = false, addToHistory = tru
     x -= 0;
     y -= 0;
     z -= 0;
-    
+
     const cube = document.createElement("span");
     cube.className = "cube placing";
     cube.style.setProperty("--x", x);
@@ -506,4 +506,10 @@ window.addEventListener("load", () => {
   if (urlParameter.has("c")) deserialize(urlParameter.get("c"));
   else if (lastSave) deserialize(lastSave);
   else placeCube(0, 0, 0);
+  if (navigator.userAgent.includes("Firefox")) {
+    const FFStyle = document.createElement("link");
+    FFStyle.rel = "stylesheet";
+    FFStyle.href = "firefox.css";
+    document.head.appendChild(FFStyle);
+  }
 });
