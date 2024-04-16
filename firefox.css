@@ -1,0 +1,19 @@
+/* 🔥🦊 */
+.cube {
+  background-image: none;
+}
+.cube::before,
+.cube::after {
+  content: "";
+  width: 100px;
+  height: 100px;
+  position: absolute;
+}
+.cube::before {
+  background-color: #fff4;
+  clip-path: polygon(50% 0%, 95% 25%, 50% 50%, 5% 25%);
+}
+.cube::after {
+  background-color: #0004;
+  clip-path: polygon(95% 25%, 95% 75%, 50% 100%, 50% 50%);
+}
