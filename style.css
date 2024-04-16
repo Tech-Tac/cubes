@@ -51,7 +51,6 @@ body {
   z-index: calc(var(--x) + var(--y) + var(--z));
   clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
   transition: filter 200ms, scale 100ms, left 200ms ease-in-out, top 200ms ease-in-out;
-  image-rendering: pixelated;
 }
 
 .cube:hover {
