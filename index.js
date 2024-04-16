@@ -1,4 +1,3 @@
-
 const view = document.getElementsByClassName("view")[0];
 const world = document.getElementsByClassName("world")[0];
 const container = document.getElementsByClassName("cube-container")[0];
