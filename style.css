@@ -46,11 +46,11 @@ body {
   );
   left: calc((var(--x) - var(--z)) * 45px);
   top: calc((var(--x) + var(--z)) * 25px - var(--y) * 50px);
-  margin-left: -45px;
-  margin-top: -45px;
+  margin-left: -50px;
+  margin-top: -50px;
   z-index: calc(var(--x) + var(--y) + var(--z));
   clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
-  transition: filter 200ms, scale 100ms, left 200ms ease-in-out, top 200ms ease-in-out;
+  transition: filter 200ms, scale 100ms, left 200ms ease-in-out, top 200ms ease-in-out, z-index 200ms;
 }
 
 .cube:hover {
