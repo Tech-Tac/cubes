@@ -14,6 +14,9 @@ const Params = new URLSearchParams(window.location.search);
 
 let currColor = "#ff0000";
 let isPanning = false;
+let isRotating = false;
+let rotateDistance = 0;
+const rotateThreshold = 100;
 let rotation = 0;
 let panX = 0;
 let panY = 0;
@@ -330,14 +333,30 @@ function share() {
 let downPos = { x: 0, y: 0 };
 view.addEventListener("pointerdown", (e) => {
   if (e.target === view && !e.altKey) {
-    isPanning = true;
-    downPos = { x: e.clientX, y: e.clientY };
+    if (e.button == 2) {
+      isRotating = true;
+    } else {
+      isPanning = true;
+      downPos = { x: e.clientX, y: e.clientY };
+    }
   } else if (e.altKey) {
     isDragging = true;
     dragStartY = e.target.style.getPropertyValue("--y") || 0;
   }
 });
-view.addEventListener("pointermove", (e) => {
+document.addEventListener("pointermove", (e) => {
+  if (isRotating) {
+    rotateDistance -= e.movementX;
+    if (rotateDistance >= rotateThreshold) {
+      rotate(rotation + 90 * Math.floor(rotateDistance / rotateThreshold));
+
+      rotateDistance %= rotateThreshold;
+    } else if (rotateDistance <= -rotateThreshold) {
+      rotate(rotation - 90 * Math.floor(rotateDistance / -rotateThreshold));
+
+      rotateDistance %= -rotateThreshold;
+    }
+  }
   if (isPanning) {
     pan(e.movementX, e.movementY);
   }
@@ -346,7 +365,7 @@ view.addEventListener("pointermove", (e) => {
     placeCube(worldPos.x, dragStartY, worldPos.z);
   }
 });
-view.addEventListener("pointerup", (e) => {
+document.addEventListener("pointerup", (e) => {
   if (!isPinching && isPanning && e.target === view && e.button !== 2 && e.clientX - downPos.x === 0 && e.clientY - downPos.y === 0) {
     const worldPos = worldCoords(e.clientX, e.clientY);
     placeCube(worldPos.x, 0, worldPos.z);
@@ -358,6 +377,7 @@ view.addEventListener("pointerup", (e) => {
     }
   }
   isPanning = false;
+  isRotating = false;
   isBreaking = false;
   isPicking = false;
   isDragging = false;
