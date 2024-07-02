@@ -51,7 +51,7 @@ Make 3D builds out of little cubes, you can change cube colors, view from a diff
 Coding and design is by me (@Tech-Tac).
 Cube sound is from FreeSound.org.
 @Jaegerwald fixed pixelation on Firefox.
-Some requests from users has been implemented.
+Some requests from users have been implemented.
 
 ## Canvas-based version [Abandoned]
 
