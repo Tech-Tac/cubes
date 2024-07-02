@@ -21,6 +21,7 @@ let rotation = 0;
 let panX = 0;
 let panY = 0;
 let zoom = 1;
+let enableHistory = true;
 let history = [];
 let historyIndex = 0;
 let isBreaking = false;
@@ -133,14 +134,16 @@ function getStoredSave() {
 }
 
 function addHistory(force = false) {
-  const cubes = getCubes();
-  if (force || getHistory() != cubes) {
-    if (historyIndex > 0) {
-      history.length -= historyIndex;
-      historyIndex = 0;
+  if (enableHistory) {
+    const cubes = getCubes();
+    if (force || getHistory() != cubes) {
+      if (historyIndex > 0) {
+        history.length -= historyIndex;
+        historyIndex = 0;
+      }
+      history.push(cubes);
+      storeSave();
     }
-    history.push(cubes);
-    storeSave();
   }
 }
 
@@ -154,7 +157,9 @@ function putCubes(cubes) {
 }
 
 function putHistory() {
-  putCubes(getHistory());
+  if (enableHistory) {
+    putCubes(getHistory());
+  }
 }
 
 function copyCubes() {
