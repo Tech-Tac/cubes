@@ -165,8 +165,7 @@ dialog {
   outline: none;
   background-color: white;
   box-shadow: 0 0 14px #0004;
-  padding-top: 0;
-  padding-bottom: 0;
+  padding: 0;
   overflow: visible;
   width: 512px;
 }
@@ -249,6 +248,7 @@ dialog::after {
   scrollbar-width: none;
   animation: open 250ms;
   mask: linear-gradient(to bottom, #0000, #ffff 10% 90%, #0000);
+  padding: 8pt;
   padding-block: 10%;
 }
 
