@@ -4,6 +4,8 @@
 
 Try at <https://tech-tac.github.io/cubes>
 
+Make 3D builds out of little cubes, you can change cube colors, view from a different angle, and save/share your build!
+
 ## Controls
 
 - `LMB`: Place cube
@@ -24,6 +26,7 @@ Try at <https://tech-tac.github.io/cubes>
 - `>` (`.`): Rotate view by 90°deg clockwise
 - `<` (`,`): Rotate view by 90°deg counterclockwise
 - `m`: Toggle mute
+- `h`: Hide HUD
 - `ctrl` + `z`: Undo
 - `ctrl` + `y`: Redo
 - `ctrl` + `c`: Copy cubes
@@ -31,6 +34,7 @@ Try at <https://tech-tac.github.io/cubes>
 - `ctrl` + `s`: Save
 - `ctrl` + `o`: Open file...
 - `ctrl` + `r`: Clear all cubes
+- `f1`: Show help
 - `ctrl` + `shift` + `c`: Share build link
 - `ctrl` + `p`: Play "Bad Apple!!"
 - `ctrl` + `d`: ...
