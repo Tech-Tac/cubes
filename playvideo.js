@@ -8,7 +8,7 @@ canvas.width = width;
 canvas.height = height;
 const defaultURL = "Bad Apple.mp4";
 let end = false;
-let cubes = [];
+let displayCubes = [];
 
 const init = (url = defaultURL, preview = true) => {
   enableHistory = false;
@@ -19,8 +19,8 @@ const init = (url = defaultURL, preview = true) => {
   video = document.createElement("video");
   container.innerHTML = "";
   toggleMuted(true);
-  cubes = [];
-  for (let i = 0; i < width * height; i++) cubes.push(placeCube((i % width) - width / 2, 0, Math.floor(i / width) - height / 2, "#000", true, false));
+  displayCubes = [];
+  for (let i = 0; i < width * height; i++) displayCubes.push(placeCube((i % width) - width / 2, 0, Math.floor(i / width) - height / 2, "#000", true, false));
   toggleMuted();
   video.addEventListener("play", draw);
   video.addEventListener("loadeddata", () => {
@@ -73,8 +73,8 @@ const placeFrameCubes = () => {
     const p = i / 4;
     const pixel = [frame[i], frame[i + 1], frame[i + 2]];
     const color = rgbToHex(...pixel);
-    cubes[p].color = color;
-    cubes[p].style.backgroundColor = color;
+    displayCubes[p].color = color;
+    displayCubes[p].style.backgroundColor = color;
   }
 };
 let isBeingRickRolled = false;
