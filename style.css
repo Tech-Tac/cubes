@@ -6,6 +6,7 @@ body {
   margin: 0;
   overflow: hidden;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14pt;
 }
 
 .view {
@@ -120,6 +121,7 @@ body {
   justify-content: space-between;
   align-items: center;
   align-content: flex-start;
+  transition: opacity 150ms, visibility 150ms;
 }
 
 .rotator-wrapper {
@@ -164,6 +166,10 @@ dialog {
   width: 512px;
 }
 
+dialog::backdrop {
+  background-color: #0004;
+}
+
 dialog::before,
 dialog::after {
   content: "";
@@ -184,13 +190,14 @@ dialog::after {
   border-top: 64px solid white;
 }
 
-.btn-close {
+.btn-cube {
+  --color: #0d0;
+  --hover-color: #6f6;
+  --icon: "?";
+  --hover-icon: "!";
   appearance: none;
-  background-color: #888;
-  color: white;
-  position: absolute;
-  transform: translate(-50%, -50%);
-  left: 50%;
+  background-color: var(--color);
+  color: var(--text-color);
   width: 32pt;
   height: 32pt;
   font-size: 24pt;
@@ -202,28 +209,42 @@ dialog::after {
   transition: background-color 100ms;
 }
 
-.btn-close::before {
+.btn-close {
+  --icon: "?";
+  --hover-icon: "X";
+  --color: #888;
+  --hover-color: #f00;
+  --text-color: #fff;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50%;
+}
+
+.btn-cube::before {
   content: var(--icon, "?");
 }
 
-.btn-close:is(:hover, :focus-visible) {
-  background-color: #f00;
+.btn-cube:is(:hover, :focus-visible) {
+  background-color: var(--hover-color);
 }
 
-.btn-close:is(:hover, :focus-visible):before {
-  content: "X";
+.btn-cube:is(:hover, :focus-visible):before {
+  content: var(--hover-icon);
 }
 
-.btn-close:active {
-  background-color: #800;
+.btn-cube:active {
+  background-color: color-mix(in SRGB, var(--color) 50%, #000 50%);
+  color: #fff;
 }
 
 .content {
   text-align: left;
   max-height: 512px;
   overflow: auto;
-  scrollbar-width: thin;
-  animation: open 250ms ease-in-out;
+  scrollbar-width: none;
+  animation: open 250ms;
+  mask: linear-gradient(to bottom, #0000, #ffff 10% 90%, #0000);
+  padding-block: 10%;
 }
 
 @keyframes open {
@@ -236,4 +257,10 @@ dialog::after {
   to {
     max-height: 0;
   }
+}
+
+.hud.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }

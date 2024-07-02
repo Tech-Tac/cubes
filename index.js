@@ -1,6 +1,7 @@
 const view = document.getElementsByClassName("view")[0];
 const world = document.getElementsByClassName("world")[0];
 const container = document.getElementsByClassName("cube-container")[0];
+const hud = document.getElementsByClassName("hud")[0];
 const colorPicker = document.getElementsByClassName("color-picker")[0];
 const rotator = document.getElementsByClassName("rotator")[0];
 const saveBtn = document.getElementsByClassName("btn-save")[0];
@@ -492,10 +493,21 @@ document.addEventListener("keydown", (e) => {
     e.preventDefault();
     toggleMuted();
   }
+  if (e.code === "KeyH") {
+    e.preventDefault();
+    hud.classList.toggle("hidden");
+  }
+  if (e.code === "F1") {
+    e.preventDefault();
+    helpDialog.showModal();
+  }
 });
 
 helpBtn.addEventListener("click", () => helpDialog.showModal());
 closeBtn.addEventListener("click", () => helpDialog.close());
+helpDialog.addEventListener("click", (e) => {
+  if (e.target === helpDialog) helpDialog.close();
+});
 
 window.addEventListener("load", () => {
   rotate(rotation);

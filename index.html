@@ -26,14 +26,15 @@
           <button type="button" class="btn-save">Save</button>
           <button type="button" class="btn-load" onclick="file.click()">load<input type="file" hidden id="file" class="load-file" /></button>
         </div>
-        <button class="btn-help">?</button>
-        <a href="https://github.com/Tech-Tac" target="_blank" class="author">@Tech-Tac</a>
+        <button class="btn-cube btn-help" title="Help"></button>
+        <a href="https://github.com/Tech-Tac" target="_blank" class="author">Tech-Tac</a>
       </div>
     </div>
     <div class="gui">
       <dialog id="dlg-help">
-        <button autofocus title="Close" class="btn-close" style="--icon: '?'"></button>
+        <button autofocus title="Close" class="btn-cube btn-close"></button>
         <div class="content">
+          <p>Make 3D builds out of little cubes, you can change cube colors, view from a different angle, and save/share your build!</p>
           <h2 id="controls">Controls</h2>
           <ul>
             <li><code>LMB</code>: Place cube</li>
@@ -54,6 +55,7 @@
             <li><code>&gt;</code> (<code>.</code>): Rotate view by 90°deg clockwise</li>
             <li><code>&lt;</code> (<code>,</code>): Rotate view by 90°deg counterclockwise</li>
             <li><code>m</code>: Toggle mute</li>
+            <li><code>h</code>: Hide HUD</li>
             <li><code>ctrl</code> + <code>z</code>: Undo</li>
             <li><code>ctrl</code> + <code>y</code>: Redo</li>
             <li><code>ctrl</code> + <code>c</code>: Copy cubes</li>
@@ -61,6 +63,7 @@
             <li><code>ctrl</code> + <code>s</code>: Save</li>
             <li><code>ctrl</code> + <code>o</code>: Open file...</li>
             <li><code>ctrl</code> + <code>r</code>: Clear all cubes</li>
+            <li><code>f1</code>: Show help</li>
             <li><code>ctrl</code> + <code>shift</code> + <code>c</code>: Share build link</li>
             <li><code>ctrl</code> + <code>p</code>: Play &quot;Bad Apple!!&quot;</li>
             <li><code>ctrl</code> + <code>d</code>: ...</li>
@@ -72,6 +75,7 @@
             <li><code>pinch</code>: Zoom</li>
             <li><code>swipe</code>: Pan</li>
           </ul>
+          <a href="https://www.github.com/Tech-Tac/cubes" target="_blank">Source on GitHub</a>
         </div>
       </dialog>
     </div>
