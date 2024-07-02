@@ -123,6 +123,11 @@ body {
   align-content: flex-start;
   transition: opacity 150ms, visibility 150ms;
 }
+.hud.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
 
 .rotator-wrapper {
   display: flex;
@@ -247,6 +252,21 @@ dialog::after {
   padding-block: 10%;
 }
 
+.cubes-deco {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.cubes-deco .cube {
+  position: static;
+  display: inline-block;
+  margin: 0;
+  transform: scale(0.75);
+}
+
 @keyframes open {
   from {
     max-height: 0;
@@ -257,10 +277,4 @@ dialog::after {
   to {
     max-height: 0;
   }
-}
-
-.hud.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
 }

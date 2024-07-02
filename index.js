@@ -10,6 +10,7 @@ const helpBtn = document.getElementsByClassName("btn-help")[0];
 const helpDialog = document.getElementById("dlg-help");
 const closeBtn = document.getElementsByClassName("btn-close")[0];
 const file = document.getElementById("file");
+const Params = new URLSearchParams(window.location.search);
 
 let currColor = "#ff0000";
 let isPanning = false;
@@ -32,7 +33,7 @@ let isDragging = false;
 let dragStartY = 0;
 
 function getCubes() {
-  return document.querySelectorAll(".cube:not(.breaking)");
+  return document.querySelectorAll(".cube-container > .cube:not(.breaking)");
 }
 
 function angleFromPoints(x1, y1, x2, y2) {
@@ -322,9 +323,8 @@ function getURL() {
 function share() {
   const url = getURL();
   window.navigator.clipboard.writeText(url).then(() => {
-    alert("Copied link: \n" + url);
+    alert("Copied share link!");
   });
-  window.history.pushState(document.title, "", url);
 }
 
 let downPos = { x: 0, y: 0 };
@@ -425,7 +425,7 @@ view.addEventListener("touchmove", handleTouchMove);
 view.addEventListener("touchend", handleTouchEnd);
 
 document.addEventListener("keydown", (e) => {
-  if (e.code === "KeyC" && e.ctrlKey) {
+  if (e.code === "KeyC" && e.ctrlKey && !e.shiftKey) {
     e.preventDefault();
     copyCubes();
   }
@@ -510,15 +510,16 @@ helpDialog.addEventListener("click", (e) => {
 });
 
 window.addEventListener("load", () => {
+  window.history.pushState({}, "", window.location.pathname);
   rotate(rotation);
   setColor(currColor);
   toggleMuted(localStorage.getItem("muted") === "true");
   const lastSave = getStoredSave();
-  const urlParameter = new URLSearchParams(window.location.search);
-  if (urlParameter.has("c")) deserialize(urlParameter.get("c"));
+  if (Params.has("c")) deserialize(Params.get("c"));
   else if (lastSave) deserialize(lastSave);
   else placeCube(0, 0, 0);
   if (navigator.userAgent.includes("Firefox")) {
+    // Apply Firefox rendering fix
     const FFStyle = document.createElement("link");
     FFStyle.rel = "stylesheet";
     FFStyle.href = "firefox.css";

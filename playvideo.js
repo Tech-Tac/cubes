@@ -42,13 +42,6 @@ const init = (url = defaultURL, preview = true) => {
   document.body.appendChild(video);
   video.load();
 
-  /* canvas.style.position = "absolute";
-  canvas.style.right = "0";
-  canvas.style.bottom = "0";
-  canvas.style.width = "256px";
-  canvas.style.imageRendering = "pixelated";
-  document.body.appendChild(canvas); */
-
   panX = 0;
   panY = 0;
   zoom = 1;
@@ -76,11 +69,9 @@ const placeFrameCubes = () => {
   for (let i = 0; i < frame.length; i += 4) {
     const p = i / 4;
     const pixel = [frame[i], frame[i + 1], frame[i + 2]];
-    //const grayscale = (pixel[0] + pixel[1] + pixel[2]) / (255 * 3);
     const color = rgbToHex(...pixel);
     cubes[p].color = color;
     cubes[p].style.backgroundColor = color;
-    //cubes[p].style.setProperty("--y", grayscale);
   }
 };
 let isBeingRickRolled = false;
@@ -94,16 +85,18 @@ document.addEventListener("keydown", (e) => {
   if (e.code === "KeyP" && e.ctrlKey) {
     e.preventDefault();
     init();
-  } else if (e.code === "KeyD" && e.ctrlKey) {
-    e.preventDefault();
-    rickRoll();
   }
 });
 
-if (!localStorage.getItem("gotRickRolled")) {
-  document.addEventListener("click", () => {
-    if (!localStorage.getItem("gotRickRolled") && !isBeingRickRolled) {
-      rickRoll();
-    }
-  });
+const noRickRoll = Params.has("rickroll") && ["false", "0", "no", "n", "f"].includes(Params.get("rickroll").toLowerCase());
+const forceRickRoll = Params.has("rickroll") && !noRickRoll;
+
+if (!noRickRoll) {
+  if (forceRickRoll || !localStorage.getItem("gotRickRolled")) {
+    document.addEventListener("click", () => {
+      if (!isBeingRickRolled) {
+        rickRoll();
+      }
+    });
+  }
 }
