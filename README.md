@@ -55,6 +55,6 @@ Some requests from users have been implemented.
 
 ## Canvas-based version [Abandoned]
 
-The main project is works by creating a styled HTML element for each cube, however, a primitive HTML-5 `canvas`-based version of the project is available to try at <https://tech-tac.github.io/cubes/canvas>
+The main project works by creating a styled HTML element for each cube, however, a primitive HTML-5 `canvas`-based version of the project is available to try at <https://tech-tac.github.io/cubes/canvas>
 
 &copy; 2023/2024 @ech-Tac
