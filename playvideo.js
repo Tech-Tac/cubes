@@ -11,6 +11,7 @@ let end = false;
 let cubes = [];
 
 const init = (url = defaultURL, preview = true) => {
+  enableHistory = false;
   console.log("Starting...");
   end = false;
   video.pause();
@@ -20,6 +21,7 @@ const init = (url = defaultURL, preview = true) => {
   toggleMuted(true);
   cubes = [];
   for (let i = 0; i < width * height; i++) cubes.push(placeCube((i % width) - width / 2, 0, Math.floor(i / width) - height / 2, "#000", true, false));
+  toggleMuted();
   video.addEventListener("play", draw);
   video.addEventListener("loadeddata", () => {
     if (video.readyState >= 3) {
@@ -29,9 +31,10 @@ const init = (url = defaultURL, preview = true) => {
   });
   video.addEventListener("ended", () => {
     end = true;
-    toggleMuted();
     video.remove();
     ctx.clearRect(0, 0, width, height);
+    enableHistory = true;
+    putHistory();
   });
   video.src = url;
   video.style.position = "absolute";
@@ -85,6 +88,10 @@ document.addEventListener("keydown", (e) => {
   if (e.code === "KeyP" && e.ctrlKey) {
     e.preventDefault();
     init();
+  }
+  if (e.code === "KeyM") {
+    e.preventDefault();
+    video.muted = !video.muted;
   }
 });
 
