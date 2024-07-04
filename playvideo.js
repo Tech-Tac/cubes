@@ -95,8 +95,9 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-const noRickRoll = Params.has("rickroll") && ["false", "0", "no", "n", "f"].includes(Params.get("rickroll").toLowerCase());
-const forceRickRoll = Params.has("rickroll") && !noRickRoll;
+const paramName = "r";
+const noRickRoll = Params.has(paramName) && ["false", "0", "no", "n", "f"].includes(Params.get(paramName).toLowerCase());
+const forceRickRoll = Params.has(paramName) && !noRickRoll;
 
 if (!noRickRoll) {
   if (forceRickRoll || !localStorage.getItem("gotRickRolled")) {
