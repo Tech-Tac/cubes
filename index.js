@@ -260,6 +260,7 @@ function placeCube(x, y, z, color = currColor, force = false, addToHistory = tru
         if (e.button == 0 && e.ctrlKey) {
           isPainting = true;
           cube.style.backgroundColor = currColor;
+          cube.color = currColor;
         } else if (e.button == 0) placeAdjacent(e);
         else if (e.button == 2) {
           breakCube(cube);
@@ -280,7 +281,10 @@ function placeCube(x, y, z, color = currColor, force = false, addToHistory = tru
     });
 
     cube.addEventListener("pointerenter", () => {
-      if (isPainting) cube.style.backgroundColor = currColor;
+      if (isPainting) {
+        cube.style.backgroundColor = currColor;
+        cube.color = currColor;
+      }
       if (isBreaking) breakTimeout = setTimeout(breakFunction, 100);
       if (isPicking) pickColor(cube);
     });
