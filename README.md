@@ -11,6 +11,7 @@ Make 3D builds out of little cubes, you can change cube colors, view from a diff
 - `LMB`: Place cube
 - `shift` + `LMB`: Place cube (opposite face)
 - `alt` + `drag`: Draw with cubes
+- `ctrl` + `drag`: Paint cubes with color
 - `RMB`: Break cube
 - `MMB`: Pick color
 - `RMB` + `drag`: Rotate view (locked to 90° increments)
