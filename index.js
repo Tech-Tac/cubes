@@ -26,6 +26,7 @@ let history = [];
 let historyIndex = 0;
 let isBreaking = false;
 let isPicking = false;
+let isPainting = false;
 let muted = false;
 
 let backupClipboard = "";
@@ -33,7 +34,7 @@ let initialFingerDistance = 0;
 let initialScale = 1;
 let currentScale = 1;
 let isPinching = false;
-let isDragging = false;
+let isDrawing = false;
 let dragStartY = 0;
 
 function getCubes() {
@@ -256,7 +257,10 @@ function placeCube(x, y, z, color = currColor, force = false, addToHistory = tru
     let started = false;
     cube.addEventListener("pointerdown", (e) => {
       if (e.pointerType !== "touch" && !isPinching) {
-        if (e.button == 0) placeAdjacent(e);
+        if (e.button == 0 && e.ctrlKey) {
+          isPainting = true;
+          cube.style.backgroundColor = currColor;
+        } else if (e.button == 0) placeAdjacent(e);
         else if (e.button == 2) {
           breakCube(cube);
           isBreaking = true;
@@ -276,6 +280,7 @@ function placeCube(x, y, z, color = currColor, force = false, addToHistory = tru
     });
 
     cube.addEventListener("pointerenter", () => {
+      if (isPainting) cube.style.backgroundColor = currColor;
       if (isBreaking) breakTimeout = setTimeout(breakFunction, 100);
       if (isPicking) pickColor(cube);
     });
@@ -344,8 +349,8 @@ view.addEventListener("pointerdown", (e) => {
       isPanning = true;
       downPos = { x: e.clientX, y: e.clientY };
     }
-  } else if (e.altKey) {
-    isDragging = true;
+  } else if (e.button == 0 && e.altKey) {
+    isDrawing = true;
     dragStartY = e.target.style.getPropertyValue("--y") || 0;
   }
 });
@@ -365,7 +370,7 @@ document.addEventListener("pointermove", (e) => {
   if (isPanning) {
     pan(e.movementX, e.movementY);
   }
-  if (isDragging) {
+  if (isDrawing) {
     const worldPos = worldCoords(e.clientX, e.clientY + dragStartY * 50 * zoom);
     placeCube(worldPos.x, dragStartY, worldPos.z);
   }
@@ -385,7 +390,8 @@ document.addEventListener("pointerup", (e) => {
   isRotating = false;
   isBreaking = false;
   isPicking = false;
-  isDragging = false;
+  isDrawing = false;
+  isPainting = false;
 });
 
 view.addEventListener("wheel", (e) => {
