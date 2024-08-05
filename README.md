@@ -36,6 +36,7 @@ Make 3D builds out of little cubes, you can change cube colors, view from a diff
 - `ctrl` + `s`: Save
 - `ctrl` + `o`: Open file...
 - `ctrl` + `r`: Clear all cubes
+- `ctrl` + `b`: Balls
 - `f1`: Show help
 - `ctrl` + `shift` + `c`: Share build link
 - `ctrl` + `p`: Play "Bad Apple!!"
