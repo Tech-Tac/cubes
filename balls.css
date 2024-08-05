@@ -1,5 +1,10 @@
-.cube {
+.cube,
+.btn-cube {
   background-image: radial-gradient(at 25% 25%, #fff8, transparent, #0004);
   clip-path: none;
   border-radius: 50%;
+}
+.cube::before,
+.cube::after {
+  display: none;
 }
