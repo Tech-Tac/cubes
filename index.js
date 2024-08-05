@@ -346,6 +346,21 @@ function share() {
   });
 }
 
+function toggleBalls() {
+  let ballsStyle = document.getElementById("ballsStyle");
+  if (ballsStyle) {
+    ballsStyle.remove();
+    document.title = "Cubes";
+  } else {
+    let newStyle = document.createElement("link");
+    newStyle.id = "ballsStyle";
+    newStyle.rel = "stylesheet";
+    newStyle.href = "balls.css";
+    document.head.appendChild(newStyle);
+    document.title = "Balls";
+  }
+}
+
 let downPos = { x: 0, y: 0 };
 view.addEventListener("pointerdown", (e) => {
   if (e.target === view && !e.altKey) {
@@ -489,6 +504,10 @@ document.addEventListener("keydown", (e) => {
   if (e.code === "KeyR" && e.ctrlKey) {
     e.preventDefault();
     clear();
+  }
+  if (e.code === "KeyB" && e.ctrlKey) {
+    e.preventDefault();
+    toggleBalls();
   }
   if (e.code === "KeyC" && e.ctrlKey && e.shiftKey) {
     e.preventDefault();
