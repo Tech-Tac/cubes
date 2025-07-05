@@ -1,93 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="description" content="2.5D Colored cube voxel-art editor by Tech-Tac" />
-    <meta name="author" content="Tech-Tac" />
-    <meta name="keywords" content="Cubes, 3D, 2.5D, Voxel, Art" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
-    <title>Cubes</title>
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="view">
-      <div class="world animate">
-        <div class="cube-container"></div>
-      </div>
-      <div class="hud">
-        <input type="color" class="color-picker" value="#ff0000" />
-        <div class="rotator-wrapper">
-          <button class="rotator-btn" onclick="rotate(rotation-90)">&lt;</button>
-          <input type="range" class="rotator" id="rotator" min="0" value="0" step="90" max="270" />
-          <button class="rotator-btn" onclick="rotate(rotation+90)">&gt;</button>
-        </div>
-        <div class="save-load">
-          <button type="button" class="btn-save">Save</button>
-          <button type="button" class="btn-load" onclick="file.click()">load<input type="file" hidden id="file" class="load-file" /></button>
-        </div>
-        <button class="btn-cube btn-help" title="Help"></button>
-        <a href="https://github.com/Tech-Tac" target="_blank" class="author">Tech-Tac</a>
-      </div>
-    </div>
-    <div class="gui">
-      <dialog id="dlg-help">
-        <button autofocus title="Close" class="btn-cube btn-close"></button>
-        <div class="content">
-          <p>Make 3D builds out of little <span id="helpBtnCubeBalls">cubes</span>, you can change cube colors, view from a different angle, and save/share your build!</p>
-          <h2 id="controls">Controls</h2>
-          <ul>
-            <li><code>LMB</code>: Place cube</li>
-            <li><code>shift</code> + <code>LMB</code>: Place cube (opposite face)</li>
-            <li><code>alt</code> + <code>drag</code>: Draw with cubes</li>
-            <li><code>ctrl</code> + <code>drag</code>: Paint cubes with color</li>
-            <li><code>RMB</code>: Break cube</li>
-            <li><code>MMB</code>: Pick color</li>
-            <li><code>drag color-picker to cube</code>: Pick color</li>
-            <li><code>RMB</code> + <code>drag</code>: Rotate view (locked to 90° increments)</li>
-            <li><code>wheel up</code>: Zoom in</li>
-            <li><code>wheel down</code>: Zoom out</li>
-            <li><code>drag</code>: Pan</li>
-            <li><code>leftarrow</code>: Pan left</li>
-            <li><code>rightarrow</code>: Pan right</li>
-            <li><code>uparrow</code>: Pan up</li>
-            <li><code>downarrow</code>: Pan down</li>
-            <li><code>+</code> (numpad): Zoom in</li>
-            <li><code>-</code> (numpad): Zoom out</li>
-            <li><code>&gt;</code> (<code>.</code>): Rotate view by 90°deg clockwise</li>
-            <li><code>&lt;</code> (<code>,</code>): Rotate view by 90°deg counterclockwise</li>
-            <li><code>m</code>: Toggle mute</li>
-            <li><code>h</code>: Hide HUD</li>
-            <li><code>ctrl</code> + <code>z</code>: Undo</li>
-            <li><code>ctrl</code> + <code>y</code>: Redo</li>
-            <li><code>ctrl</code> + <code>c</code>: Copy cubes</li>
-            <li><code>ctrl</code> + <code>v</code>: Paste Cubes</li>
-            <li><code>ctrl</code> + <code>s</code>: Save</li>
-            <li><code>ctrl</code> + <code>o</code>: Open file...</li>
-            <li><code>ctrl</code> + <code>r</code>: Clear all cubes</li>
-            <li><code>ctrl</code> + <code>b</code>: Balls</li>
-            <li><code>f1</code>: Show help</li>
-            <li><code>ctrl</code> + <code>shift</code> + <code>c</code>: Share build link</li>
-            <li><code>ctrl</code> + <code>p</code>: Play &quot;Bad Apple!!&quot;</li>
-          </ul>
-          <h3 id="touch">Touch</h3>
-          <ul>
-            <li><code>tap</code>: Place cube</li>
-            <li><code>long press</code>: Break cube</li>
-            <li><code>pinch</code>: Zoom</li>
-            <li><code>swipe</code>: Pan</li>
-          </ul>
-          <a href="https://www.github.com/Tech-Tac/cubes" target="_blank">Source on GitHub</a>
-          <br />
-          <div class="cubes-deco">
-            <div class="cube" style="background-color: #f00"></div>
-            <div class="cube" style="background-color: #0f0"></div>
-            <div class="cube" style="background-color: #00f"></div>
-          </div>
-        </div>
-      </dialog>
-    </div>
-    <script src="index.js"></script>
-    <script src="playvideo.js"></script>
-  </body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="2.5D Colored cube voxel-art editor by Tech-Tac" />
+		<meta name="author" content="Tech-Tac" />
+		<meta name="keywords" content="Cubes, 3D, 2.5D, Voxel, Art" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+		<title>Cubes</title>
+		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+		<link rel="stylesheet" href="style.css" />
+	</head>
+
+	<body>
+		<div class="view">
+			<div class="world animate">
+				<div class="cube-container"></div>
+			</div>
+			<div class="hud">
+				<input type="color" class="color-picker" value="#ff0000" />
+				<div class="rotator-wrapper">
+					<button class="rotator-btn" onclick="rotate(rotation-90)">&lt;</button>
+					<input type="range" class="rotator" id="rotator" min="0" value="0" step="90" max="270" />
+					<button class="rotator-btn" onclick="rotate(rotation+90)">&gt;</button>
+				</div>
+				<div class="save-load">
+					<button type="button" class="btn-save">Save</button>
+					<button type="button" class="btn-load" onclick="file.click()">
+						load<input type="file" hidden id="file" class="load-file" />
+					</button>
+				</div>
+				<button class="btn-cube btn-help" title="Help"></button>
+				<a href="https://github.com/Tech-Tac" target="_blank" class="author">Tech-Tac</a>
+			</div>
+		</div>
+		<div class="gui">
+			<dialog id="dlg-help">
+				<button autofocus title="Close" class="btn-cube btn-close"></button>
+				<div class="content">
+					<p>
+						Make 3D builds out of little <span id="helpBtnCubeBalls">cubes</span>, you can change cube colors, view from
+						a different angle, and save/share your build!
+					</p>
+					<h2 id="controls">Controls</h2>
+					<ul>
+						<li><code>LMB</code>: Place cube</li>
+						<li><code>shift</code> + <code>LMB</code>: Place cube (opposite face)</li>
+						<li><code>alt</code> + <code>drag</code>: Draw with cubes</li>
+						<li><code>ctrl</code> + <code>drag</code>: Paint cubes with color</li>
+						<li><code>RMB</code>: Break cube</li>
+						<li><code>MMB</code>: Pick color</li>
+						<li><code>drag color-picker to cube</code>: Pick color</li>
+						<li><code>RMB</code> + <code>drag</code>: Rotate view (locked to 90° increments)</li>
+						<li><code>wheel up</code>: Zoom in</li>
+						<li><code>wheel down</code>: Zoom out</li>
+						<li><code>drag</code>: Pan</li>
+						<li><code>leftarrow</code>: Pan left</li>
+						<li><code>rightarrow</code>: Pan right</li>
+						<li><code>uparrow</code>: Pan up</li>
+						<li><code>downarrow</code>: Pan down</li>
+						<li><code>+</code> (numpad): Zoom in</li>
+						<li><code>-</code> (numpad): Zoom out</li>
+						<li><code>&gt;</code> (<code>.</code>): Rotate view by 90°deg clockwise</li>
+						<li><code>&lt;</code> (<code>,</code>): Rotate view by 90°deg counterclockwise</li>
+						<li><code>m</code>: Toggle mute</li>
+						<li><code>h</code>: Hide HUD</li>
+						<li><code>ctrl</code> + <code>z</code>: Undo</li>
+						<li><code>ctrl</code> + <code>y</code>: Redo</li>
+						<li><code>ctrl</code> + <code>c</code>: Copy cubes</li>
+						<li><code>ctrl</code> + <code>v</code>: Paste Cubes</li>
+						<li><code>ctrl</code> + <code>s</code>: Save</li>
+						<li><code>ctrl</code> + <code>o</code>: Open file...</li>
+						<li><code>ctrl</code> + <code>r</code>: Clear all cubes</li>
+						<li><code>ctrl</code> + <code>b</code>: Balls</li>
+						<li><code>f1</code>: Show help</li>
+						<li><code>ctrl</code> + <code>shift</code> + <code>c</code>: Share build link</li>
+					</ul>
+					<h3 id="touch">Touch</h3>
+					<ul>
+						<li><code>tap</code>: Place cube</li>
+						<li><code>long press</code>: Break cube</li>
+						<li><code>pinch</code>: Zoom</li>
+						<li><code>swipe</code>: Pan</li>
+					</ul>
+					<a href="https://www.github.com/Tech-Tac/cubes" target="_blank">Source on GitHub</a>
+					<br />
+					<div class="cubes-deco">
+						<div class="cube" style="background-color: #f00"></div>
+						<div class="cube" style="background-color: #0f0"></div>
+						<div class="cube" style="background-color: #00f"></div>
+					</div>
+				</div>
+			</dialog>
+		</div>
+		<script src="index.js"></script>
+	</body>
 </html>

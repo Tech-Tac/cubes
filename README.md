@@ -39,7 +39,6 @@ Make 3D builds out of little cubes, you can change cube colors, view from a diff
 - `ctrl` + `b`: Balls
 - `f1`: Show help
 - `ctrl` + `shift` + `c`: Share build link
-- `ctrl` + `p`: Play "Bad Apple!!"
 
 ### Touch
 
@@ -51,11 +50,10 @@ Make 3D builds out of little cubes, you can change cube colors, view from a diff
 ## Credits
 
 Coding and design is by me (@Tech-Tac).
-Cube sound is from FreeSound.org.
+Cube place/remove sound effect is from FreeSound.org.
 @Jaegerwald fixed pixelation on Firefox.
-Some requests from users have been implemented.
 
-## Canvas-based version [Abandoned]
+## Canvas-based version [WIP]
 
 The main project works by creating a styled HTML element for each cube, however, a primitive HTML-5 `canvas`-based version of the project is available to try at <https://tech-tac.github.io/cubes/canvas>
 
