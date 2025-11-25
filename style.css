@@ -59,13 +59,13 @@ body {
   scale: 1.1;
 }
 
-.cube:active {
+/* .cube:active {
   filter: brightness(0.5);
   scale: 0.9;
-}
+} */
 
 .cube.placing {
-  animation: cube-place 100ms ease-in-out;
+  animation: cube-place 150ms ease-out;
 }
 
 .cube.breaking {

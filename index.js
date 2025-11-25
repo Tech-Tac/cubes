@@ -317,7 +317,8 @@ function placeCube(x, y, z, color = currColor, force = false, addToHistory = tru
 
 		container.appendChild(cube);
 		if (addToHistory) addHistory();
-		setTimeout(() => cube.classList.remove("placing"), 100);
+		// setTimeout(() => cube.classList.remove("placing"), 150);
+		cube.onanimationend = ()=> cube.classList.remove("placing");
 		playSound();
 		console.log("Placed a cube at ", x, y, z, " with color ", color);
 		return cube;
@@ -326,10 +327,10 @@ function placeCube(x, y, z, color = currColor, force = false, addToHistory = tru
 
 function breakCube(cube, addToHistory = true) {
 	cube.classList.add("breaking");
-	setTimeout(() => {
-		cube.classList.remove("breaking");
+	cube.onanimationend = () => {
 		cube.remove();
-	}, 150);
+		cube.classList.remove("breaking");
+	};
 	if (addToHistory) addHistory();
 	playSound();
 }
