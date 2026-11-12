@@ -373,7 +373,7 @@ function toggleBalls() {
 	if (ballsStyle) {
 		ballsStyle.remove();
 		document.title = "Cubes";
-		document.getElementById("helpBtnCubeBalls").innerHTML = "cube";
+		document.querySelectorAll(".helpBtnCubeBalls").forEach(s => s.textContent = "cube");
 	} else {
 		let newStyle = document.createElement("link");
 		newStyle.id = "ballsStyle";
@@ -381,7 +381,7 @@ function toggleBalls() {
 		newStyle.href = "balls.css";
 		document.head.appendChild(newStyle);
 		document.title = "Balls";
-		document.getElementById("helpBtnCubeBalls").innerHTML = "ball";
+		document.querySelectorAll(".helpBtnCubeBalls").forEach(s => s.textContent = "ball");
 	}
 }
 
